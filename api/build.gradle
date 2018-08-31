@@ -1,0 +1,12 @@
+group 'br.com.rnaufal'
+version '1.0.0-SNAPSHOT'
+
+ext.moduleName = 'api.main'
+
+apply plugin: 'java-library'
+
+sourceCompatibility = 1.10
+
+repositories {
+    mavenCentral()
+}
