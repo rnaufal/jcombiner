@@ -27,9 +27,12 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
 
     private final FieldValidator validator;
 
+    private final ValidationMessages validationMessages;
+
     public CombinationAnnotationParserImpl() {
         descriptorsByClass = Maps.newConcurrentMap();
         validator = new CollectionFieldTypeValidator(new FieldExistsOnTargetClassValidator());
+        validationMessages = new ValidationMessages();
     }
 
     @Override
@@ -87,7 +90,7 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
         final var errorMessage = fields.get(false)
                 .values()
                 .stream()
-                .map(validationResult -> ValidationMessages.getErrorMessage(validationResult.getValidatorResultClass()))
+                .map(validationResult -> validationMessages.getErrorMessage(validationResult.getValidatorResultClass()))
                 .flatMap(Optional::stream)
                 .reduce(StringUtils.EMPTY, (errorMsg, otherErrorMsg) -> errorMsg + "\n" + otherErrorMsg);
 
