@@ -14,10 +14,7 @@ import com.google.common.collect.Maps;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -69,11 +66,10 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
         return getValidFields(validatedFieldsByName)
                 .entrySet()
                 .stream()
-                .collect(Collectors.toConcurrentMap(Map.Entry::getKey, entry -> {
+                .collect(Collectors.collectingAndThen(Collectors.toConcurrentMap(Map.Entry::getKey, entry -> {
                     final var combinationAnnotation = entry.getValue().getField().getAnnotation(CombinationProperty.class);
-
                     return new CombinationDescriptor(entry.getKey(), combinationAnnotation.size());
-                }));
+                }), Collections::unmodifiableMap));
     }
 
     private boolean hasCombinationProperties(final Map<Boolean, Map<String, FieldValidationResult>> validatedFields) {
@@ -106,7 +102,8 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
                 .stream(clazz.getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(CombinationProperty.class))
                 .map(field -> validator.validate(field, targetClass))
-                .collect(Collectors.partitioningBy(FieldValidationResult::isValid,
-                        Collectors.toMap(fieldValidation -> fieldValidation.getField().getName(), Function.identity())));
+                .collect(Collectors.collectingAndThen(Collectors.partitioningBy(FieldValidationResult::isValid,
+                        Collectors.toMap(fieldValidation -> fieldValidation.getField().getName(), Function.identity())),
+                        Collections::unmodifiableMap));
     }
 }

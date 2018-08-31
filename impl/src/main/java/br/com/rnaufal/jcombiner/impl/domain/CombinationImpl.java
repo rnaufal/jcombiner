@@ -3,7 +3,6 @@ package br.com.rnaufal.jcombiner.impl.domain;
 import br.com.rnaufal.jcombiner.api.domain.Combination;
 import com.google.common.collect.Lists;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -20,7 +19,7 @@ public class CombinationImpl<T> implements Combination<T> {
     }
 
     public void addAll(final Combination<T> combination) {
-        this.values.addAll(combination.stream().collect(Collectors.toList()));
+        this.values.addAll(combination.stream().collect(Collectors.toUnmodifiableList()));
     }
 
     public Stream<T> stream() {

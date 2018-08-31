@@ -26,7 +26,7 @@ public enum ValidationMessages {
 
     private static final Map<Class<? extends FieldValidator>, String> messagesByValidatorClass =
             Arrays.stream(ValidationMessages.values())
-                    .collect(Collectors.toMap(validationMessages -> validationMessages.fieldValidatorClass,
+                    .collect(Collectors.toUnmodifiableMap(validationMessages -> validationMessages.fieldValidatorClass,
                             validationMessages -> validationMessages.errorMessage));
 
     ValidationMessages(final Class<? extends FieldValidator> fieldValidatorClass,

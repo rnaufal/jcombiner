@@ -113,7 +113,7 @@ public class IterativeCombinationsGenerator<T> implements CombinationsGenerator<
             final var successors = IntStream
                     .range(i + 1, items.size())
                     .boxed()
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toUnmodifiableList());
             successorsByIndex.add(Map.entry(i, successors));
         }
     }

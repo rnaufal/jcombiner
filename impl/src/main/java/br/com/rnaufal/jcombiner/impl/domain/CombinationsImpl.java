@@ -20,7 +20,7 @@ public class CombinationsImpl<T> implements Combinations<T> {
     }
 
     public void addAll(final Combinations<T> combinations) {
-        this.values.addAll(combinations.stream().collect(Collectors.toList()));
+        this.values.addAll(combinations.stream().collect(Collectors.toUnmodifiableList()));
     }
 
     public Stream<Combination<T>> stream() {
