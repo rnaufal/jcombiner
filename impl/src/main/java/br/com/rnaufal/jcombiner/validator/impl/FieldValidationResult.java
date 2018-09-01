@@ -5,7 +5,7 @@ import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import java.lang.reflect.Field;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public class FieldValidationResult {
 

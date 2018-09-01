@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.when;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 @ExtendWith(MockitoExtension.class)
 class CollectionFieldTypeValidatorTest {

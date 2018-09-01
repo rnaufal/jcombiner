@@ -13,7 +13,7 @@ import java.util.stream.IntStream;
 import java.util.stream.StreamSupport;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public class IterativeCombinationsGenerator<T> implements CombinationsGenerator<T> {
 

@@ -1,7 +1,7 @@
 package br.com.rnaufal.jcombiner.exception;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public class InvalidCombinationFieldException extends RuntimeException {
 

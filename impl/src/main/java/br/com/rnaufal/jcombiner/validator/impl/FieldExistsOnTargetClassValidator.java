@@ -7,9 +7,11 @@ import org.apache.commons.lang3.reflect.FieldUtils;
 import java.lang.reflect.Field;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public class FieldExistsOnTargetClassValidator implements FieldValidator {
+
+    private static final String FIELD_NOT_EXISTS_ON_TARGET_CLASS_ERROR = "Field [%s] not exists on target class!";
 
     @Override
     public FieldValidationResult validate(final Field field,
@@ -23,6 +25,11 @@ public class FieldExistsOnTargetClassValidator implements FieldValidator {
         }
     }
 
+    @Override
+    public String getErrorMessage() {
+        return FIELD_NOT_EXISTS_ON_TARGET_CLASS_ERROR;
+    }
+
     private boolean existsFieldOnTargetClass(final Class<?> targetClass,
                                              final Field field) {
         return FieldUtils.getDeclaredField(targetClass, getTargetFieldName(field), true) != null;
@@ -31,6 +38,6 @@ public class FieldExistsOnTargetClassValidator implements FieldValidator {
     private String getTargetFieldName(final Field field) {
         final var combinationAnnotation = field.getAnnotation(CombinationProperty.class);
 
-        return combinationAnnotation.targetField().equals("") ? field.getName() : combinationAnnotation.targetField();
+        return combinationAnnotation.name().equals("") ? field.getName() : combinationAnnotation.name();
     }
 }

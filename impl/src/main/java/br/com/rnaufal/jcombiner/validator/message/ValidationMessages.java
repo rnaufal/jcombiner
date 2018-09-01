@@ -1,26 +1,29 @@
 package br.com.rnaufal.jcombiner.validator.message;
 
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
-import br.com.rnaufal.jcombiner.validator.impl.CollectionFieldTypeValidator;
-import br.com.rnaufal.jcombiner.validator.impl.FieldExistsOnTargetClassValidator;
+import br.com.rnaufal.jcombiner.validator.impl.FieldValidationResult;
+import com.google.common.collect.Maps;
 
 import java.util.Map;
 import java.util.Optional;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public class ValidationMessages {
 
     private final Map<Class<? extends FieldValidator>, String> messagesByFieldValidatorClass;
 
     public ValidationMessages() {
-        messagesByFieldValidatorClass = Map.of(CollectionFieldTypeValidator.class,
-                "Field [%s] is not assignable from Collection!",
-                FieldExistsOnTargetClassValidator.class, "Field [%s] not exists on target class [%s]!");
+        messagesByFieldValidatorClass = Maps.newConcurrentMap();
     }
 
-    public Optional<String> getErrorMessage(final Class<? extends FieldValidator> fieldValidatorClass) {
-        return Optional.ofNullable(messagesByFieldValidatorClass.get(fieldValidatorClass));
+    public void add(final FieldValidator fieldValidator) {
+        messagesByFieldValidatorClass.putIfAbsent(fieldValidator.getClass(), fieldValidator.getErrorMessage());
+    }
+
+    public Optional<String> getErrorMessage(final FieldValidationResult validationResult) {
+        return Optional.ofNullable(messagesByFieldValidatorClass.get(validationResult.getValidatorResultClass()))
+                       .map(errorMessage -> String.format(errorMessage, validationResult.getField().getName()));
     }
 }

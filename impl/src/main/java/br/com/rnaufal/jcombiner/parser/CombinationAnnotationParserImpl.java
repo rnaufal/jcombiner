@@ -1,7 +1,7 @@
 package br.com.rnaufal.jcombiner.parser;
 
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
-import br.com.rnaufal.jcombiner.api.annotation.CombinationsTarget;
+import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
 import br.com.rnaufal.jcombiner.exception.InvalidCombinationFieldException;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationDescriptor;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationsDescriptor;
@@ -14,12 +14,16 @@ import com.google.common.collect.Maps;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public class CombinationAnnotationParserImpl implements CombinationAnnotationParser {
 
@@ -33,6 +37,7 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
         descriptorsByClass = Maps.newConcurrentMap();
         validator = new CollectionFieldTypeValidator(new FieldExistsOnTargetClassValidator());
         validationMessages = new ValidationMessages();
+        validator.registerTo(validationMessages);
     }
 
     @Override
@@ -43,7 +48,7 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
     }
 
     private Optional<CombinationsDescriptor> buildDescriptor(final Class<?> clazz) {
-        final var combinationsAnnotation = clazz.getAnnotation(CombinationsTarget.class);
+        final var combinationsAnnotation = clazz.getAnnotation(CombinationClass.class);
 
         if (combinationsAnnotation == null) {
             return Optional.empty();
@@ -69,10 +74,18 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
         return getValidFields(validatedFieldsByName)
                 .entrySet()
                 .stream()
-                .collect(Collectors.collectingAndThen(Collectors.toConcurrentMap(Map.Entry::getKey, entry -> {
-                    final var combinationAnnotation = entry.getValue().getField().getAnnotation(CombinationProperty.class);
-                    return new CombinationDescriptor(entry.getKey(), combinationAnnotation.size());
-                }), Collections::unmodifiableMap));
+                .collect(Collectors.collectingAndThen(Collectors.toConcurrentMap(Map.Entry::getKey,
+                                                                                 this::buildCombinationDescriptor),
+                                                      Collections::unmodifiableMap));
+    }
+
+    private CombinationDescriptor buildCombinationDescriptor(final Map.Entry<String, FieldValidationResult> entry) {
+        final var combinationAnnotation = entry
+                .getValue()
+                .getField()
+                .getAnnotation(CombinationProperty.class);
+
+        return new CombinationDescriptor(entry.getKey(), combinationAnnotation.size());
     }
 
     private boolean hasCombinationProperties(final Map<Boolean, Map<String, FieldValidationResult>> validatedFields) {
@@ -90,7 +103,7 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
         final var errorMessage = fields.get(false)
                 .values()
                 .stream()
-                .map(validationResult -> validationMessages.getErrorMessage(validationResult.getValidatorResultClass()))
+                .map(validationMessages::getErrorMessage)
                 .flatMap(Optional::stream)
                 .reduce(StringUtils.EMPTY, (errorMsg, otherErrorMsg) -> errorMsg + "\n" + otherErrorMsg);
 

@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public class CombinationsImpl<T> implements Combinations<T> {
 

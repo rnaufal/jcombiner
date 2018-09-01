@@ -1,7 +1,7 @@
 package br.com.rnaufal.jcombiner.impl.domain;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public class CombinationDescriptor {
 

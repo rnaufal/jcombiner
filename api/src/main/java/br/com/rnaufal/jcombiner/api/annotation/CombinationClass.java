@@ -6,11 +6,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-public @interface CombinationsTarget {
+public @interface CombinationClass {
 
     Class<?> value();
 }

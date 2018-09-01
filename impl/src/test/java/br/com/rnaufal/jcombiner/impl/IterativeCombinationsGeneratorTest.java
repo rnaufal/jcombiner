@@ -21,7 +21,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 class IterativeCombinationsGeneratorTest {
 

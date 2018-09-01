@@ -1,7 +1,7 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
-import br.com.rnaufal.jcombiner.api.annotation.CombinationsTarget;
+import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 class FieldExistsOnTargetClassValidatorTest {
 
@@ -54,7 +54,7 @@ class FieldExistsOnTargetClassValidatorTest {
         assertThat(actualValidationResult.getField().getName(), is(equalTo("otherIntegers")));
     }
 
-    @CombinationsTarget(ValidCombinationClass.TargetCombinationClass.class)
+    @CombinationClass(ValidCombinationClass.TargetCombinationClass.class)
     private static class ValidCombinationClass {
 
         @CombinationProperty(size = 2)
@@ -62,24 +62,24 @@ class FieldExistsOnTargetClassValidatorTest {
 
         private static class TargetCombinationClass {
 
-            private Combinations<String> strings;
+            private Combinations strings;
         }
     }
 
-    @CombinationsTarget(IntegersCombinationClass.InvalidTargetCombinationClass.class)
+    @CombinationClass(IntegersCombinationClass.InvalidTargetCombinationClass.class)
     private static class IntegersCombinationClass {
 
         @CombinationProperty(size = 4)
         public Collection<Integer> integers;
 
-        @CombinationProperty(size = 5, targetField = "combinations")
+        @CombinationProperty(size = 5, name = "combinations")
         public Collection<Integer> otherIntegers;
 
         private static class InvalidTargetCombinationClass {
 
-            private Combinations<Integer> field;
+            private Combinations field;
 
-            private Combinations<Integer> stringCombinations;
+            private Combinations stringCombinations;
         }
     }
 }

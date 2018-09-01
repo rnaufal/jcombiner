@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -14,5 +14,5 @@ public @interface CombinationProperty {
 
     int size();
 
-    String targetField() default "";
+    String name() default "";
 }

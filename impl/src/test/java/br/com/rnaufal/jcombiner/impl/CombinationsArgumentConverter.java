@@ -8,7 +8,7 @@ import org.junit.jupiter.params.converter.SimpleArgumentConverter;
 import java.util.List;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public class CombinationsArgumentConverter<T> extends SimpleArgumentConverter {
 

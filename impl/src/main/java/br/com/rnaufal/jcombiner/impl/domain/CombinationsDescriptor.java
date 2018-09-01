@@ -4,7 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public class CombinationsDescriptor {
 

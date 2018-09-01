@@ -3,7 +3,7 @@ package br.com.rnaufal.jcombiner.api.domain;
 import java.util.stream.Stream;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public interface Combinations<T> {
 

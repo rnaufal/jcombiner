@@ -5,7 +5,7 @@ import br.com.rnaufal.jcombiner.impl.domain.CombinationsDescriptor;
 import java.util.Optional;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 public interface CombinationAnnotationParser {
 

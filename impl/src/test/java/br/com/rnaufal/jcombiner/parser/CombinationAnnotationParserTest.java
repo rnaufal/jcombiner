@@ -1,7 +1,7 @@
 package br.com.rnaufal.jcombiner.parser;
 
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
-import br.com.rnaufal.jcombiner.api.annotation.CombinationsTarget;
+import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import br.com.rnaufal.jcombiner.exception.InvalidCombinationFieldException;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,7 +17,7 @@ import static org.hamcrest.collection.IsMapContaining.hasKey;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 class CombinationAnnotationParserTest {
 
@@ -31,7 +31,7 @@ class CombinationAnnotationParserTest {
     @Test
     void shouldParseClassWithCombinationsAnnotationSuccessfully() {
 
-        @CombinationsTarget(CombinationsClass.CombinationsTargetClass.class)
+        @CombinationClass(CombinationsClass.CombinationsTargetClass.class)
         class CombinationsClass {
 
             @CombinationProperty(size = 2)
@@ -41,9 +41,9 @@ class CombinationAnnotationParserTest {
             Collection<Integer> integers;
 
             class CombinationsTargetClass {
-                Combinations<String> strings;
+                Combinations strings;
 
-                Combinations<Integer> integers;
+                Combinations integers;
             }
         }
 
@@ -77,7 +77,7 @@ class CombinationAnnotationParserTest {
     @Test
     void throwsExceptionWhenTargetClassHasNoCombinationFieldsMapped() {
 
-        @CombinationsTarget(CombinationsClass.CombinationsTargetClass.class)
+        @CombinationClass(CombinationsClass.CombinationsTargetClass.class)
         class CombinationsClass {
 
             List<String> strings;
@@ -94,7 +94,7 @@ class CombinationAnnotationParserTest {
     @Test
     void throwsExceptionWhenFieldsAreInvalid() {
 
-        @CombinationsTarget(InvalidCombinationsClass.CombinationsTargetClass.class)
+        @CombinationClass(InvalidCombinationsClass.CombinationsTargetClass.class)
         class InvalidCombinationsClass {
 
             @CombinationProperty(size = 3)
