@@ -8,6 +8,6 @@ JCombiner is a framework to generate combinations of elements in Java
 
 ## Build
 
-```shell
+```Shell
 ./gradlew clean build
 ```
