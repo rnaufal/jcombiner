@@ -8,7 +8,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
@@ -17,13 +16,13 @@ import static org.hamcrest.Matchers.is;
 /**
  * Created by rafael.naufal
  */
-class FieldHasSameTypeOnTargetClassValidatorTest {
+class TargetFieldParameterizedTypeValidatorTest {
 
-    private FieldHasSameTypeOnTargetClassValidator validator;
+    private TargetFieldParameterizedTypeValidator validator;
 
     @BeforeEach
     void setUp() {
-        this.validator = new FieldHasSameTypeOnTargetClassValidator();
+        this.validator = new TargetFieldParameterizedTypeValidator();
     }
 
     @Test
@@ -44,17 +43,6 @@ class FieldHasSameTypeOnTargetClassValidatorTest {
 
         assertThat(actualResult.isValid(), is(equalTo(true)));
         assertThat(actualResult.getField().getName(), is(equalTo("values")));
-    }
-
-
-    @Test
-    void invalidResultWhenTargetFieldHasDifferentType() throws NoSuchFieldException {
-        final var stringsField = InvalidStringsCombinationClass.class.getField("strings");
-
-        final var actualResult = validator.validate(stringsField, InvalidStringsCombinationClass.InvalidTargetStringsCombinationClass.class);
-
-        assertThat(actualResult.isValid(), is(equalTo(false)));
-        assertThat(actualResult.getField().getName(), is(equalTo("strings")));
     }
 
     @Test
@@ -91,18 +79,6 @@ class FieldHasSameTypeOnTargetClassValidatorTest {
             private Combinations<Integer> integers;
 
             private Combinations<Double> inputValues;
-        }
-    }
-
-    @CombinationClass(InvalidStringsCombinationClass.InvalidTargetStringsCombinationClass.class)
-    private static class InvalidStringsCombinationClass {
-
-        @CombinationProperty(size = 2)
-        public Set<String> strings;
-
-        private static class InvalidTargetStringsCombinationClass {
-
-            private Set<String> strings;
         }
     }
 

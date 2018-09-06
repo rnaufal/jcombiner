@@ -1,7 +1,7 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
-import br.com.rnaufal.jcombiner.api.domain.Combinations;
+import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.reflect.FieldUtils;
@@ -13,18 +13,14 @@ import java.util.Optional;
 /**
  * Created by rnaufal
  */
-public class FieldHasSameTypeOnTargetClassValidator implements FieldValidator {
+public class TargetFieldParameterizedTypeValidator implements FieldValidator {
 
-    private static final String FIELD_HAS_DIFFERENT_TYPE_ON_TARGET_CLASS_ERROR = "Field [%s] has different type on target class!";
+    private static final String FIELD_PARAMETERIZED_TYPE_ON_TARGET_CLASS_ERROR = "Field [%s] has different parameterized type on target class!";
 
     @Override
     public FieldValidationResult validate(final Field field,
                                           final Class<?> targetClass) {
         final var targetField = FieldUtils.getDeclaredField(targetClass, getTargetFieldName(field), true);
-
-        if (targetField.getType() != Combinations.class) {
-            return FieldValidationResult.error(field, getClass());
-        }
 
         return getActualTypeArgument(field)
                 .map(sourceFieldTypeArgument -> compareTypeArguments(field, targetField, sourceFieldTypeArgument))
@@ -41,7 +37,7 @@ public class FieldHasSameTypeOnTargetClassValidator implements FieldValidator {
                 .map(targetFieldTypeArgument -> FieldValidationResult.ok(field, getClass()))
                 .orElseGet(() -> FieldValidationResult.error(field, getClass()));
     }
-    
+
     private Optional<String> getActualTypeArgument(final Field field) {
         final var genericType = field.getGenericType();
         if (genericType instanceof ParameterizedType) {
@@ -53,7 +49,7 @@ public class FieldHasSameTypeOnTargetClassValidator implements FieldValidator {
 
     @Override
     public String getErrorMessage() {
-        return FIELD_HAS_DIFFERENT_TYPE_ON_TARGET_CLASS_ERROR;
+        return FIELD_PARAMETERIZED_TYPE_ON_TARGET_CLASS_ERROR;
     }
 
     private String getTargetFieldName(final Field field) {

@@ -1,8 +1,9 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
-import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
+import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
+import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.messages.ValidationMessages;
 import org.apache.commons.lang3.reflect.FieldUtils;
 
@@ -12,24 +13,23 @@ import java.util.Objects;
 /**
  * Created by rnaufal
  */
-public class FieldExistsOnTargetClassValidator implements FieldValidator {
+public class CombinationsTargetFieldTypeValidator implements FieldValidator {
 
-    private static final String FIELD_NOT_EXISTS_ON_TARGET_CLASS_ERROR = "Field [%s] not exists on target class!";
+    private static final String COMBINATIONS_TARGET_FIELD_TYPE_ERROR = "Target field [%s] type is not Combinations!";
 
     private final FieldValidator nextValidator;
 
-    public FieldExistsOnTargetClassValidator(final FieldValidator nextValidator) {
+    public CombinationsTargetFieldTypeValidator(final FieldValidator nextValidator) {
         this.nextValidator = Objects.requireNonNull(nextValidator);
     }
 
     @Override
     public FieldValidationResult validate(final Field field,
                                           final Class<?> targetClass) {
-        if (existsFieldOnTargetClass(targetClass, field)) {
-            return nextValidator.validate(field, targetClass);
-        } else {
-            return FieldValidationResult.error(field, getClass());
-        }
+        final var targetField = FieldUtils.getDeclaredField(targetClass, getTargetFieldName(field), true);
+
+        return targetField.getType() == Combinations.class ?
+                nextValidator.validate(field, targetClass) : FieldValidationResult.error(field, getClass());
     }
 
     @Override
@@ -39,19 +39,14 @@ public class FieldExistsOnTargetClassValidator implements FieldValidator {
         nextValidator.registerTo(validationMessages);
     }
 
-    @Override
-    public String getErrorMessage() {
-        return FIELD_NOT_EXISTS_ON_TARGET_CLASS_ERROR;
-    }
-
-    private boolean existsFieldOnTargetClass(final Class<?> targetClass,
-                                             final Field field) {
-        return FieldUtils.getDeclaredField(targetClass, getTargetFieldName(field), true) != null;
-    }
-
     private String getTargetFieldName(final Field field) {
         final var combinationAnnotation = field.getAnnotation(CombinationProperty.class);
 
         return combinationAnnotation.name().equals("") ? field.getName() : combinationAnnotation.name();
+    }
+
+    @Override
+    public String getErrorMessage() {
+        return COMBINATIONS_TARGET_FIELD_TYPE_ERROR;
     }
 }

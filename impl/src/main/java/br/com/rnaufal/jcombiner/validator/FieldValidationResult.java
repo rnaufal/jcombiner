@@ -1,6 +1,4 @@
-package br.com.rnaufal.jcombiner.validator.impl;
-
-import br.com.rnaufal.jcombiner.validator.FieldValidator;
+package br.com.rnaufal.jcombiner.validator;
 
 import java.lang.reflect.Field;
 

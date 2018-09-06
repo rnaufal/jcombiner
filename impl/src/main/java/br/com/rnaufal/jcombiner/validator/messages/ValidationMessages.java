@@ -1,7 +1,7 @@
-package br.com.rnaufal.jcombiner.validator.message;
+package br.com.rnaufal.jcombiner.validator.messages;
 
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
-import br.com.rnaufal.jcombiner.validator.impl.FieldValidationResult;
+import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import com.google.common.collect.Maps;
 
 import java.util.Map;

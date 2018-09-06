@@ -5,12 +5,13 @@ import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.exception.InvalidCombinationFieldException;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationDescriptor;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationsDescriptor;
+import br.com.rnaufal.jcombiner.validator.impl.CombinationsTargetFieldTypeValidator;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.impl.CollectionFieldTypeValidator;
 import br.com.rnaufal.jcombiner.validator.impl.FieldExistsOnTargetClassValidator;
-import br.com.rnaufal.jcombiner.validator.impl.FieldHasSameTypeOnTargetClassValidator;
-import br.com.rnaufal.jcombiner.validator.impl.FieldValidationResult;
-import br.com.rnaufal.jcombiner.validator.message.ValidationMessages;
+import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
+import br.com.rnaufal.jcombiner.validator.impl.TargetFieldParameterizedTypeValidator;
+import br.com.rnaufal.jcombiner.validator.messages.ValidationMessages;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,7 +33,8 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
 
     public CombinationAnnotationParserImpl() {
         descriptorsByClass = Maps.newConcurrentMap();
-        validator = new CollectionFieldTypeValidator(new FieldExistsOnTargetClassValidator(new FieldHasSameTypeOnTargetClassValidator()));
+        validator = new CollectionFieldTypeValidator(new FieldExistsOnTargetClassValidator(
+                new CombinationsTargetFieldTypeValidator(new TargetFieldParameterizedTypeValidator())));
         validationMessages = new ValidationMessages();
         validator.registerTo(validationMessages);
     }
@@ -72,8 +74,8 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
                 .entrySet()
                 .stream()
                 .collect(Collectors.collectingAndThen(Collectors.toConcurrentMap(Map.Entry::getKey,
-                                                                                 this::buildCombinationDescriptor),
-                                                      Collections::unmodifiableMap));
+                        this::buildCombinationDescriptor),
+                        Collections::unmodifiableMap));
     }
 
     private CombinationDescriptor buildCombinationDescriptor(final Map.Entry<String, FieldValidationResult> entry) {

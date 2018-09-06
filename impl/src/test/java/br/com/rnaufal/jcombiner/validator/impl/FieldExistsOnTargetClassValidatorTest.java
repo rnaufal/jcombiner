@@ -3,6 +3,7 @@ package br.com.rnaufal.jcombiner.validator.impl;
 import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
+import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

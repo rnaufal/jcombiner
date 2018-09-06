@@ -1,7 +1,8 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
+import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
-import br.com.rnaufal.jcombiner.validator.message.ValidationMessages;
+import br.com.rnaufal.jcombiner.validator.messages.ValidationMessages;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -48,7 +49,6 @@ public class CollectionFieldTypeValidator implements FieldValidator {
     }
 
     private boolean hasParameterizedType(final Field field) {
-        final var genericType = field.getGenericType();
-        return genericType instanceof ParameterizedType;
+        return field.getGenericType() instanceof ParameterizedType;
     }
 }
