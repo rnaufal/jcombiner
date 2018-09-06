@@ -1,10 +1,8 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
-import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
@@ -20,7 +18,7 @@ public class TargetFieldParameterizedTypeValidator implements FieldValidator {
     @Override
     public FieldValidationResult validate(final Field field,
                                           final Class<?> targetClass) {
-        final var targetField = FieldUtils.getDeclaredField(targetClass, getTargetFieldName(field), true);
+        final var targetField = getTargetField(field, targetClass);
 
         return getActualTypeArgument(field)
                 .map(sourceFieldTypeArgument -> compareTypeArguments(field, targetField, sourceFieldTypeArgument))
@@ -50,11 +48,5 @@ public class TargetFieldParameterizedTypeValidator implements FieldValidator {
     @Override
     public String getErrorMessage() {
         return FIELD_PARAMETERIZED_TYPE_ON_TARGET_CLASS_ERROR;
-    }
-
-    private String getTargetFieldName(final Field field) {
-        final var combinationAnnotation = field.getAnnotation(CombinationProperty.class);
-
-        return combinationAnnotation.name().equals("") ? field.getName() : combinationAnnotation.name();
     }
 }

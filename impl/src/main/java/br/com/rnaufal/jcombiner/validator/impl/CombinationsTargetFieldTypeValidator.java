@@ -1,11 +1,9 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
-import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
-import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
+import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.messages.ValidationMessages;
-import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -26,7 +24,7 @@ public class CombinationsTargetFieldTypeValidator implements FieldValidator {
     @Override
     public FieldValidationResult validate(final Field field,
                                           final Class<?> targetClass) {
-        final var targetField = FieldUtils.getDeclaredField(targetClass, getTargetFieldName(field), true);
+        final var targetField = getTargetField(field, targetClass);
 
         return targetField.getType() == Combinations.class ?
                 nextValidator.validate(field, targetClass) : FieldValidationResult.error(field, getClass());
@@ -37,12 +35,6 @@ public class CombinationsTargetFieldTypeValidator implements FieldValidator {
         FieldValidator.super.registerTo(validationMessages);
 
         nextValidator.registerTo(validationMessages);
-    }
-
-    private String getTargetFieldName(final Field field) {
-        final var combinationAnnotation = field.getAnnotation(CombinationProperty.class);
-
-        return combinationAnnotation.name().equals("") ? field.getName() : combinationAnnotation.name();
     }
 
     @Override

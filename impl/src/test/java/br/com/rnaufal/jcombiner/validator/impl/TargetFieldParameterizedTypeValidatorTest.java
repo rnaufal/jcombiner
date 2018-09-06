@@ -14,7 +14,7 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
 
 /**
- * Created by rafael.naufal
+ * Created by rnaufal
  */
 class TargetFieldParameterizedTypeValidatorTest {
 

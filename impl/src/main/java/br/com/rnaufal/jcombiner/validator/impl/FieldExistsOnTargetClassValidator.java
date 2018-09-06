@@ -1,10 +1,8 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
-import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.messages.ValidationMessages;
-import org.apache.commons.lang3.reflect.FieldUtils;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
@@ -25,7 +23,7 @@ public class FieldExistsOnTargetClassValidator implements FieldValidator {
     @Override
     public FieldValidationResult validate(final Field field,
                                           final Class<?> targetClass) {
-        if (existsFieldOnTargetClass(targetClass, field)) {
+        if (existsFieldOnTargetClass(field, targetClass)) {
             return nextValidator.validate(field, targetClass);
         } else {
             return FieldValidationResult.error(field, getClass());
@@ -44,14 +42,8 @@ public class FieldExistsOnTargetClassValidator implements FieldValidator {
         return FIELD_NOT_EXISTS_ON_TARGET_CLASS_ERROR;
     }
 
-    private boolean existsFieldOnTargetClass(final Class<?> targetClass,
-                                             final Field field) {
-        return FieldUtils.getDeclaredField(targetClass, getTargetFieldName(field), true) != null;
-    }
-
-    private String getTargetFieldName(final Field field) {
-        final var combinationAnnotation = field.getAnnotation(CombinationProperty.class);
-
-        return combinationAnnotation.name().equals("") ? field.getName() : combinationAnnotation.name();
+    private boolean existsFieldOnTargetClass(final Field field,
+                                             final Class<?> targetClass) {
+        return getTargetField(field, targetClass) != null;
     }
 }
