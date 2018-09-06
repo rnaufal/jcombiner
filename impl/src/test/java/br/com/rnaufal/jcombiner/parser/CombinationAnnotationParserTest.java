@@ -41,9 +41,9 @@ class CombinationAnnotationParserTest {
             Collection<Integer> integers;
 
             class CombinationsTargetClass {
-                Combinations strings;
+                Combinations<String> strings;
 
-                Combinations integers;
+                Combinations<Integer> integers;
             }
         }
 
@@ -56,6 +56,50 @@ class CombinationAnnotationParserTest {
         assertThat(descriptor.getFieldDescriptorsByName().values(), hasSize(2));
         assertThat(descriptor.getFieldDescriptorsByName(), hasKey("strings"));
         assertThat(descriptor.getFieldDescriptorsByName(), hasKey("integers"));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenTargetFieldTypesAreInvalid() {
+
+        @CombinationClass(CombinationsClass.InvalidTargetFieldTypeCombinationsClass.class)
+        class CombinationsClass {
+
+            @CombinationProperty(size = 2)
+            List<String> strings;
+
+            @CombinationProperty(size = 3)
+            Collection<Integer> integers;
+
+            class InvalidTargetFieldTypeCombinationsClass {
+                List<String> strings;
+
+                List<Integer> integers;
+            }
+        }
+
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(CombinationsClass.class));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenTargetFieldTypesTypeParametersAreMissing() {
+
+        @CombinationClass(CombinationsClass.TargetFieldTypeParametersMissingClass.class)
+        class CombinationsClass {
+
+            @CombinationProperty(size = 2)
+            List<String> strings;
+
+            @CombinationProperty(size = 3)
+            Collection<Integer> integers;
+
+            class TargetFieldTypeParametersMissingClass {
+                Combinations strings;
+
+                Combinations integers;
+            }
+        }
+
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(CombinationsClass.class));
     }
 
     @Test
@@ -75,7 +119,7 @@ class CombinationAnnotationParserTest {
     }
 
     @Test
-    void throwsExceptionWhenTargetClassHasNoCombinationFieldsMapped() {
+    void shouldThrowExceptionWhenTargetClassHasNoCombinationFieldsMapped() {
 
         @CombinationClass(CombinationsClass.CombinationsTargetClass.class)
         class CombinationsClass {
@@ -92,7 +136,7 @@ class CombinationAnnotationParserTest {
     }
 
     @Test
-    void throwsExceptionWhenFieldsAreInvalid() {
+    void shouldThrowExceptionWhenFieldsAreInvalid() {
 
         @CombinationClass(InvalidCombinationsClass.CombinationsTargetClass.class)
         class InvalidCombinationsClass {

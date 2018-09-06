@@ -7,6 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collection;
 import java.util.Set;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -41,6 +42,16 @@ class CollectionFieldTypeValidatorTest {
     }
 
     @Test
+    void shouldReturnValidationErrorWhenFieldHasNotParameterizedType() throws NoSuchFieldException {
+        final var valuesField = InvalidCollectionClass.class.getField("values");
+
+        final var fieldValidationResult = collectionFieldTypeValidator.validate(valuesField, Object.class);
+
+        assertThat(fieldValidationResult.isValid(), is(equalTo(false)));
+        assertThat(fieldValidationResult.getField().getName(), is(equalTo("values")));
+    }
+
+    @Test
     void shouldDelegateToNextValidatorWhenFieldTypeIsCollection() throws NoSuchFieldException {
         final var stringsField = CollectionFieldClass.class.getField("strings");
 
@@ -61,5 +72,10 @@ class CollectionFieldTypeValidatorTest {
     private static class CollectionFieldClass {
 
         public Set<String> strings;
+    }
+
+    private static class InvalidCollectionClass {
+
+        public Collection values;
     }
 }

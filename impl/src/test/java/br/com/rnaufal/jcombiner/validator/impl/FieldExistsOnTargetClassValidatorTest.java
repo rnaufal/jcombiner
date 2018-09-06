@@ -1,32 +1,44 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
-import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
+import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
+import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.when;
 
 /**
  * Created by rnaufal
  */
+@ExtendWith(MockitoExtension.class)
 class FieldExistsOnTargetClassValidatorTest {
+
+    @Mock
+    private FieldValidator nextValidator;
 
     private FieldExistsOnTargetClassValidator validator;
 
     @BeforeEach
     void setUp() {
-        validator = new FieldExistsOnTargetClassValidator();
+        validator = new FieldExistsOnTargetClassValidator(nextValidator);
     }
 
     @Test
     void validResultWhenFieldExistsOnTargetClass() throws NoSuchFieldException {
         final var stringsField = ValidCombinationClass.class.getField("strings");
+
+        when(nextValidator.validate(stringsField, ValidCombinationClass.TargetCombinationClass.class))
+                .thenReturn(FieldValidationResult.ok(stringsField, validator.getClass()));
 
         final var actualValidationResult = validator.validate(stringsField, ValidCombinationClass.TargetCombinationClass.class);
 
@@ -62,7 +74,7 @@ class FieldExistsOnTargetClassValidatorTest {
 
         private static class TargetCombinationClass {
 
-            private Combinations strings;
+            private Combinations<String> strings;
         }
     }
 

@@ -4,6 +4,7 @@ import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.message.ValidationMessages;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -23,7 +24,7 @@ public class CollectionFieldTypeValidator implements FieldValidator {
     @Override
     public FieldValidationResult validate(final Field field,
                                           final Class<?> targetClass) {
-        if (Collection.class.isAssignableFrom(field.getType())) {
+        if (isValid(field)) {
             return nextValidator.validate(field, targetClass);
         } else {
             return FieldValidationResult.error(field, getClass());
@@ -40,5 +41,14 @@ public class CollectionFieldTypeValidator implements FieldValidator {
     @Override
     public String getErrorMessage() {
         return FIELD_IS_NOT_ASSIGNABLE_FROM_COLLECTION_ERROR;
+    }
+
+    private boolean isValid(final Field field) {
+        return Collection.class.isAssignableFrom(field.getType()) && hasParameterizedType(field);
+    }
+
+    private boolean hasParameterizedType(final Field field) {
+        final var genericType = field.getGenericType();
+        return genericType instanceof ParameterizedType;
     }
 }

@@ -14,4 +14,12 @@ public class CombinationDescriptor {
         this.targetFieldName = targetFieldName;
         this.size = size;
     }
+
+    public String getTargetFieldName() {
+        return targetFieldName;
+    }
+
+    public int getSize() {
+        return size;
+    }
 }

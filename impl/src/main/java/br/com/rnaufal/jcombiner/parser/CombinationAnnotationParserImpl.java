@@ -1,24 +1,21 @@
 package br.com.rnaufal.jcombiner.parser;
 
-import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
+import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.exception.InvalidCombinationFieldException;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationDescriptor;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationsDescriptor;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.impl.CollectionFieldTypeValidator;
 import br.com.rnaufal.jcombiner.validator.impl.FieldExistsOnTargetClassValidator;
+import br.com.rnaufal.jcombiner.validator.impl.FieldHasSameTypeOnTargetClassValidator;
 import br.com.rnaufal.jcombiner.validator.impl.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.message.ValidationMessages;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,7 +32,7 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
 
     public CombinationAnnotationParserImpl() {
         descriptorsByClass = Maps.newConcurrentMap();
-        validator = new CollectionFieldTypeValidator(new FieldExistsOnTargetClassValidator());
+        validator = new CollectionFieldTypeValidator(new FieldExistsOnTargetClassValidator(new FieldHasSameTypeOnTargetClassValidator()));
         validationMessages = new ValidationMessages();
         validator.registerTo(validationMessages);
     }
