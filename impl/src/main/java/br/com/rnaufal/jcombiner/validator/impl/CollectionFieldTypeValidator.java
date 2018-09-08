@@ -25,11 +25,9 @@ public class CollectionFieldTypeValidator implements FieldValidator {
     @Override
     public FieldValidationResult validate(final Field field,
                                           final Class<?> targetClass) {
-        if (isValid(field)) {
-            return nextValidator.validate(field, targetClass);
-        } else {
-            return FieldValidationResult.error(field, getClass());
-        }
+        return isValid(field) ?
+                nextValidator.validate(field, targetClass) :
+                FieldValidationResult.error(field, getClass());
     }
 
     @Override

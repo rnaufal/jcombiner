@@ -23,11 +23,9 @@ public class FieldExistsOnTargetClassValidator implements FieldValidator {
     @Override
     public FieldValidationResult validate(final Field field,
                                           final Class<?> targetClass) {
-        if (existsFieldOnTargetClass(field, targetClass)) {
-            return nextValidator.validate(field, targetClass);
-        } else {
-            return FieldValidationResult.error(field, getClass());
-        }
+        return existsFieldOnTargetClass(field, targetClass) ?
+                nextValidator.validate(field, targetClass) :
+                FieldValidationResult.error(field, getClass());
     }
 
     @Override
