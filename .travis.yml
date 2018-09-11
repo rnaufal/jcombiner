@@ -1,2 +1,6 @@
 language: java
+
 jdk: oraclejdk10
+
+after_success:
+- ./gradlew test jacocoTestReport coveralls

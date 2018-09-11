@@ -7,16 +7,20 @@ buildscript {
     }
 }
 
+plugins {
+    id 'java-library'
+    id 'jacoco'
+    id 'com.github.kt3k.coveralls' version '2.8.2'
+}
+
+apply plugin: 'org.junit.platform.gradle.plugin'
+
 group 'br.com.rnaufal'
 version '1.0.0-SNAPSHOT'
 
 ext.moduleName = 'impl.main'
 ext.junitJupiterVersion = '5.2.0'
 ext.mockitoVersion = '2.21.0'
-
-apply plugin: 'java-library'
-apply plugin: 'jacoco'
-apply plugin: 'org.junit.platform.gradle.plugin'
 
 sourceCompatibility = 1.10
 
@@ -40,6 +44,13 @@ dependencies {
 jacoco {
     toolVersion = '0.8.1'
     applyTo junitPlatformTest
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled = true
+        html.enabled = true
+    }
 }
 
 jacocoTestCoverageVerification.dependsOn jacocoTestReport
