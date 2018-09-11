@@ -35,15 +35,15 @@ class CombinationAnnotationParserTest {
         class CombinationsClass {
 
             @CombinationProperty(size = 2)
-            List<String> strings;
+            private List<String> strings;
 
             @CombinationProperty(size = 3)
-            Collection<Integer> integers;
+            private Collection<Integer> integers;
 
             class CombinationsTargetClass {
-                Combinations<String> strings;
+                private Combinations<String> strings;
 
-                Combinations<Integer> integers;
+                private Combinations<Integer> integers;
             }
         }
 
@@ -65,15 +65,15 @@ class CombinationAnnotationParserTest {
         class CombinationsClass {
 
             @CombinationProperty(size = 2)
-            List<String> strings;
+            private List<String> strings;
 
             @CombinationProperty(size = 3)
-            Collection<Integer> integers;
+            private Collection<Integer> integers;
 
             class InvalidTargetFieldTypeCombinationsClass {
-                List<String> strings;
+                private List<String> strings;
 
-                List<Integer> integers;
+                private List<Integer> integers;
             }
         }
 
@@ -87,15 +87,15 @@ class CombinationAnnotationParserTest {
         class CombinationsClass {
 
             @CombinationProperty(size = 2)
-            List<String> strings;
+            private List<String> strings;
 
             @CombinationProperty(size = 3)
-            Collection<Integer> integers;
+            private Collection<Integer> integers;
 
             class TargetFieldTypeParametersMissingClass {
-                Combinations strings;
+                private Combinations strings;
 
-                Combinations integers;
+                private Combinations integers;
             }
         }
 
@@ -108,10 +108,10 @@ class CombinationAnnotationParserTest {
         class CombinationsClass {
 
             @CombinationProperty(size = 2)
-            List<String> strings;
+            private List<String> strings;
 
             @CombinationProperty(size = 3)
-            Collection<Integer> integers;
+            private Collection<Integer> integers;
         }
 
         final var optionalDescriptor = annotationParser.parse(CombinationsClass.class);
@@ -124,9 +124,9 @@ class CombinationAnnotationParserTest {
         @CombinationClass(CombinationsClass.CombinationsTargetClass.class)
         class CombinationsClass {
 
-            List<String> strings;
+            private List<String> strings;
 
-            Collection<Integer> integers;
+            private Collection<Integer> integers;
 
             class CombinationsTargetClass {
             }
@@ -142,21 +142,21 @@ class CombinationAnnotationParserTest {
         class InvalidCombinationsClass {
 
             @CombinationProperty(size = 3)
-            String value;
+            private String value;
 
             @CombinationProperty(size = 2)
-            Integer sum;
+            private Integer sum;
 
             @CombinationProperty(size = 1)
-            Collection<String> values;
+            private Collection<String> values;
 
             class CombinationsTargetClass {
 
-                String value;
+                private String value;
 
-                Integer sum;
+                private Integer sum;
 
-                Collection<String> values;
+                private Collection<String> values;
             }
         }
 

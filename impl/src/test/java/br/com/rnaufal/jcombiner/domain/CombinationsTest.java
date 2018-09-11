@@ -32,8 +32,8 @@ class CombinationsTest {
 
     @Test
     void testCombineTwoStringCombinations() {
-        final var combinations = buildCombinationsFrom(List.of(of("1", "2"), of("2", "3")));
-        final var otherCombinations = buildCombinationsFrom(List.of(of("3", "4"), of("4", "5"), of("5", "6")));
+        final var combinations = buildCombinationsFrom(of(of("1", "2"), of("2", "3")));
+        final var otherCombinations = buildCombinationsFrom(of(of("3", "4"), of("4", "5"), of("5", "6")));
 
         combinations.addAll(otherCombinations);
 
@@ -53,9 +53,9 @@ class CombinationsTest {
     }
 
     private static Stream<Arguments> stringArgumentsProvider() {
-        return Stream.of(Arguments.of(0L, List.of()),
-                Arguments.of(1L, List.of(of("1"))),
-                Arguments.of(2L, List.of(of("1", "2"), of("2", "3"))));
+        return Stream.of(Arguments.of(0L, of()),
+                Arguments.of(1L, of(of("1"))),
+                Arguments.of(2L, of(of("1", "2"), of("2", "3"))));
     }
 
 }

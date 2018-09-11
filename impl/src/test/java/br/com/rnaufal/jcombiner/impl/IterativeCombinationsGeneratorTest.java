@@ -60,25 +60,25 @@ class IterativeCombinationsGeneratorTest {
     }
 
     private static Arguments twoSizeCombinations() {
-        return Arguments.of(2, List.of("a", "b", "c", "d", "e", "f"), List.of(of("a", "b"), of("a", "c"), of("a", "d"),
+        return Arguments.of(2, of("a", "b", "c", "d", "e", "f"), of(of("a", "b"), of("a", "c"), of("a", "d"),
                 of("a", "e"), of("a", "f"), of("b", "c"), of("b", "d"), of("b", "e"), of("b", "f"), of("c", "d"),
                 of("c", "e"), of("c", "f"), of("d", "e"), of("d", "f"), of("e", "f")));
     }
 
     private static Arguments threeSizeCombinations() {
-        return Arguments.of(3, List.of("a", "b", "c", "d", "e", "f"), List.of(of("a", "b", "c"), of("a", "b", "d"), of("a", "b", "e"),
+        return Arguments.of(3, of("a", "b", "c", "d", "e", "f"), of(of("a", "b", "c"), of("a", "b", "d"), of("a", "b", "e"),
                 of("a", "b", "f"), of("a", "c", "d"), of("a", "c", "e"), of("a", "c", "f"), of("a", "d", "e"), of("a", "d", "f"), of("a", "e", "f"),
                 of("b", "c", "d"), of("b", "c", "e"), of("b", "c", "f"), of("b", "d", "e"), of("b", "d", "f"), of("b", "e", "f"),
                 of("c", "d", "e"), of("c", "d", "f"), of("c", "e", "f"), of("d", "e", "f")));
     }
 
     private static Arguments oneSizeCombinations() {
-        return Arguments.of(1, List.of("a", "b", "c", "d", "e", "f"),
-                List.of(of("a"), of("b"), of("c"), of("d"), of("e"), of("f")));
+        return Arguments.of(1, of("a", "b", "c", "d", "e", "f"),
+                of(of("a"), of("b"), of("c"), of("d"), of("e"), of("f")));
     }
 
     private static Arguments zeroSizeCombinations() {
-        return Arguments.of(0, List.of("a", "b", "c", "d", "e", "f"), Collections.emptyList());
+        return Arguments.of(0, of("a", "b", "c", "d", "e", "f"), Collections.emptyList());
     }
 
 }
