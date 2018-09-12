@@ -32,7 +32,7 @@ public class TargetFieldParameterizedTypeValidator implements FieldValidator {
 
         return maybeActualTypeArgument
                 .filter(targetFieldTypeArgument -> StringUtils.equals(targetFieldTypeArgument, sourceFieldTypeArgument))
-                .map(targetFieldTypeArgument -> FieldValidationResult.ok(field, getClass()))
+                .map(targetFieldTypeArgument -> FieldValidationResult.ok(field, targetField, getClass()))
                 .orElseGet(() -> FieldValidationResult.error(field, getClass()));
     }
 

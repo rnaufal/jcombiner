@@ -1,17 +1,35 @@
 package br.com.rnaufal.jcombiner.impl.domain;
 
+import java.lang.reflect.Field;
+
 /**
  * Created by rnaufal
  */
 public class CombinationDescriptor {
 
-    private final String targetFieldName;
+    private final Field sourceField;
 
-    private final int size;
+    private final Field targetField;
 
-    public CombinationDescriptor(final String targetFieldName,
-                                 final int size) {
-        this.targetFieldName = targetFieldName;
-        this.size = size;
+    private final int combinationSize;
+
+    public CombinationDescriptor(final Field sourceField,
+                                 final Field targetField,
+                                 final int combinationSize) {
+        this.sourceField = sourceField;
+        this.targetField = targetField;
+        this.combinationSize = combinationSize;
+    }
+
+    public Field getSourceField() {
+        return sourceField;
+    }
+
+    public Field getTargetField() {
+        return targetField;
+    }
+
+    public int getCombinationSize() {
+        return combinationSize;
     }
 }

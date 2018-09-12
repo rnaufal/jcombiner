@@ -1,7 +1,6 @@
 package br.com.rnaufal.jcombiner.impl.domain;
 
-import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Created by rnaufal
@@ -10,19 +9,19 @@ public class CombinationsDescriptor {
 
     private final Class<?> resultClass;
 
-    private final Map<String, CombinationDescriptor> fieldDescriptorsByName;
+    private final List<CombinationDescriptor> fieldDescriptorsByName;
 
     public CombinationsDescriptor(final Class<?> resultClass,
-                                  final Map<String, CombinationDescriptor> fieldDescriptorsByName) {
+                                  final List<CombinationDescriptor> fieldDescriptors) {
         this.resultClass = resultClass;
-        this.fieldDescriptorsByName = Collections.unmodifiableMap(fieldDescriptorsByName);
+        this.fieldDescriptorsByName = fieldDescriptors;
     }
 
     public Class<?> getResultClass() {
         return resultClass;
     }
 
-    public Map<String, CombinationDescriptor> getFieldDescriptorsByName() {
+    public List<CombinationDescriptor> getFieldDescriptors() {
         return fieldDescriptorsByName;
     }
 }

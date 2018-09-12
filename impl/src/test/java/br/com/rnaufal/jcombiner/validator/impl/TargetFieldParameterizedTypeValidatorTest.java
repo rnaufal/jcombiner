@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.Collection;
 import java.util.List;
 
+import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -26,8 +27,8 @@ class TargetFieldParameterizedTypeValidatorTest {
     }
 
     @Test
-    void validResultWhenFieldHasSameTypeOnTargetClass() throws NoSuchFieldException {
-        final var integersField = ValidCombinationClass.class.getField("integers");
+    void validResultWhenFieldHasSameTypeOnTargetClass() {
+        final var integersField = getDeclaredField(ValidCombinationClass.class, "integers", true);
 
         final var actualResult = validator.validate(integersField, ValidCombinationClass.TargetCombinationClass.class);
 
@@ -36,8 +37,8 @@ class TargetFieldParameterizedTypeValidatorTest {
     }
 
     @Test
-    void validResultWhenFieldHasCustomNameAndSameTypeOnTargetClass() throws NoSuchFieldException {
-        final var valuesField = ValidCombinationClass.class.getField("values");
+    void validResultWhenFieldHasCustomNameAndSameTypeOnTargetClass() {
+        final var valuesField = getDeclaredField(ValidCombinationClass.class, "values", true);
 
         final var actualResult = validator.validate(valuesField, ValidCombinationClass.TargetCombinationClass.class);
 
@@ -46,8 +47,8 @@ class TargetFieldParameterizedTypeValidatorTest {
     }
 
     @Test
-    void invalidResultWhenSourceCombinationFieldHasNoTypeArgument() throws NoSuchFieldException {
-        final var stringsField = InvalidSourceStringsCombinationClass.class.getField("strings");
+    void invalidResultWhenSourceCombinationFieldHasNoTypeArgument() {
+        final var stringsField = getDeclaredField(InvalidSourceStringsCombinationClass.class, "strings", true);
 
         final var actualResult = validator.validate(stringsField, InvalidSourceStringsCombinationClass.TargetCombinationClass.class);
 
@@ -56,8 +57,8 @@ class TargetFieldParameterizedTypeValidatorTest {
     }
 
     @Test
-    void invalidWhenSourceAndTargetActualTypeArgumentsAreDifferent() throws NoSuchFieldException {
-        final var numbersField = InvalidFloatCombinationClass.class.getField("numbers");
+    void invalidWhenSourceAndTargetActualTypeArgumentsAreDifferent() {
+        final var numbersField = getDeclaredField(InvalidFloatCombinationClass.class, "numbers", true);
 
         final var actualResult = validator.validate(numbersField, InvalidFloatCombinationClass.InvalidTypeArgumentTargetCombinationClass.class);
 
@@ -69,10 +70,10 @@ class TargetFieldParameterizedTypeValidatorTest {
     private static class ValidCombinationClass {
 
         @CombinationProperty(size = 3)
-        public Collection<Integer> integers;
+        private Collection<Integer> integers;
 
         @CombinationProperty(size = 2, name = "inputValues")
-        public List<Double> values;
+        private List<Double> values;
 
         private static class TargetCombinationClass {
 
@@ -86,7 +87,7 @@ class TargetFieldParameterizedTypeValidatorTest {
     private static class InvalidSourceStringsCombinationClass {
 
         @CombinationProperty(size = 4)
-        public List strings;
+        private List strings;
 
         private static class TargetCombinationClass {
 
@@ -98,7 +99,7 @@ class TargetFieldParameterizedTypeValidatorTest {
     private static class InvalidFloatCombinationClass {
 
         @CombinationProperty(size = 5)
-        public List<Float> numbers;
+        private List<Float> numbers;
 
         private static class InvalidTypeArgumentTargetCombinationClass {
 

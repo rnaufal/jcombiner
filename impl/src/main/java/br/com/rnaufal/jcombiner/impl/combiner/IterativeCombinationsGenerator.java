@@ -4,6 +4,7 @@ import br.com.rnaufal.jcombiner.api.domain.Combination;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationImpl;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationsImpl;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 
@@ -29,13 +30,13 @@ public class IterativeCombinationsGenerator<T> implements CombinationsGenerator<
 
     private int nextSuccessorIndex;
 
-    public IterativeCombinationsGenerator(final List<T> items,
+    public IterativeCombinationsGenerator(final Collection<T> items,
                                           final int combinationSize) {
-        this.items = items;
+        this.items = ImmutableList.copyOf(Objects.requireNonNull(items));
         this.combinationSize = combinationSize;
         this.indexes = Queues.newArrayDeque();
         this.successorsByIndex = Lists.newArrayList();
-        buildSuccessors(items);
+        buildSuccessors(this.items);
     }
 
     public Combinations<T> generate() {

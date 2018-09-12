@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
+import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -37,11 +38,12 @@ class CombinationsTargetFieldTypeValidatorTest {
     }
 
     @Test
-    void shouldDelegateToNextValidatorWhenTargetFieldTypeIsCombinations() throws NoSuchFieldException {
-        final var integersField = ValidIntegersCombinationClass.class.getField("integers");
+    void shouldDelegateToNextValidatorWhenTargetFieldTypeIsCombinations() {
+        final var integersField = getDeclaredField(ValidIntegersCombinationClass.class, "integers", true);
+        final var targetIntegersField = getDeclaredField(ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class, "integers", true);
 
         when(nextValidator.validate(integersField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class))
-                .thenReturn(FieldValidationResult.ok(integersField, nextValidator.getClass()));
+                .thenReturn(FieldValidationResult.ok(integersField, targetIntegersField, nextValidator.getClass()));
 
         final var fieldValidationResult = validator.validate(integersField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class);
 
@@ -50,11 +52,12 @@ class CombinationsTargetFieldTypeValidatorTest {
     }
 
     @Test
-    void validResultWhenFieldHasCustomNameAndSameTypeOnTargetClass() throws NoSuchFieldException {
-        final var valuesField = ValidIntegersCombinationClass.class.getField("values");
+    void validResultWhenFieldHasCustomNameAndSameTypeOnTargetClass() {
+        final var valuesField = getDeclaredField(ValidIntegersCombinationClass.class, "values", true);
+        final var integerValuesTargetField = getDeclaredField(ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class, "integerValues", true);
 
         when(nextValidator.validate(valuesField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class))
-                .thenReturn(FieldValidationResult.ok(valuesField, nextValidator.getClass()));
+                .thenReturn(FieldValidationResult.ok(valuesField, integerValuesTargetField, nextValidator.getClass()));
 
         final var actualResult = validator.validate(valuesField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class);
 
@@ -63,8 +66,8 @@ class CombinationsTargetFieldTypeValidatorTest {
     }
 
     @Test
-    void invalidResultWhenTargetFieldHasDifferentType() throws NoSuchFieldException {
-        final var stringsField = InvalidStringsCombinationClass.class.getField("strings");
+    void invalidResultWhenTargetFieldHasDifferentType() {
+        final var stringsField = getDeclaredField(InvalidStringsCombinationClass.class, "strings", true);
 
         final var actualResult = validator.validate(stringsField, InvalidStringsCombinationClass.InvalidTargetStringsCombinationClass.class);
 
@@ -76,10 +79,10 @@ class CombinationsTargetFieldTypeValidatorTest {
     private static class ValidIntegersCombinationClass {
 
         @CombinationProperty(size = 2)
-        public Collection<Integer> integers;
+        private Collection<Integer> integers;
 
         @CombinationProperty(size = 2, name = "integerValues")
-        public List<Integer> values;
+        private List<Integer> values;
 
         private static class ValidTargetIntegersCombinationClass {
 
@@ -93,7 +96,7 @@ class CombinationsTargetFieldTypeValidatorTest {
     private static class InvalidStringsCombinationClass {
 
         @CombinationProperty(size = 2)
-        public Set<String> strings;
+        private Set<String> strings;
 
         private static class InvalidTargetStringsCombinationClass {
 

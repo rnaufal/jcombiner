@@ -13,6 +13,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
 
+import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -35,11 +36,12 @@ class FieldExistsOnTargetClassValidatorTest {
     }
 
     @Test
-    void validResultWhenFieldExistsOnTargetClass() throws NoSuchFieldException {
-        final var stringsField = ValidCombinationClass.class.getField("strings");
+    void validResultWhenFieldExistsOnTargetClass() {
+        final var stringsField = getDeclaredField(ValidCombinationClass.class, "strings", true);
+        final var targetStringsField = getDeclaredField(ValidCombinationClass.TargetCombinationClass.class, "strings", true);
 
         when(nextValidator.validate(stringsField, ValidCombinationClass.TargetCombinationClass.class))
-                .thenReturn(FieldValidationResult.ok(stringsField, validator.getClass()));
+                .thenReturn(FieldValidationResult.ok(stringsField, targetStringsField, validator.getClass()));
 
         final var actualValidationResult = validator.validate(stringsField, ValidCombinationClass.TargetCombinationClass.class);
 
@@ -48,8 +50,8 @@ class FieldExistsOnTargetClassValidatorTest {
     }
 
     @Test
-    void invalidResultWhenFieldNotExistsOnTargetClass() throws NoSuchFieldException {
-        final var integersField = IntegersCombinationClass.class.getField("integers");
+    void invalidResultWhenFieldNotExistsOnTargetClass() {
+        final var integersField = getDeclaredField(IntegersCombinationClass.class, "integers", true);
 
         final var actualValidationResult = validator.validate(integersField, IntegersCombinationClass.InvalidTargetCombinationClass.class);
 
@@ -58,8 +60,8 @@ class FieldExistsOnTargetClassValidatorTest {
     }
 
     @Test
-    void invalidResultWhenFieldCustomNameNotExistsOnTargetClass() throws NoSuchFieldException {
-        final var integersField = IntegersCombinationClass.class.getField("otherIntegers");
+    void invalidResultWhenFieldCustomNameNotExistsOnTargetClass() {
+        final var integersField = getDeclaredField(IntegersCombinationClass.class, "otherIntegers", true);
 
         final var actualValidationResult = validator.validate(integersField, IntegersCombinationClass.InvalidTargetCombinationClass.class);
 
@@ -71,7 +73,7 @@ class FieldExistsOnTargetClassValidatorTest {
     private static class ValidCombinationClass {
 
         @CombinationProperty(size = 2)
-        public Collection<String> strings;
+        private Collection<String> strings;
 
         private static class TargetCombinationClass {
 
@@ -83,10 +85,10 @@ class FieldExistsOnTargetClassValidatorTest {
     private static class IntegersCombinationClass {
 
         @CombinationProperty(size = 4)
-        public Collection<Integer> integers;
+        private Collection<Integer> integers;
 
         @CombinationProperty(size = 5, name = "combinations")
-        public Collection<Integer> otherIntegers;
+        private Collection<Integer> otherIntegers;
 
         private static class InvalidTargetCombinationClass {
 

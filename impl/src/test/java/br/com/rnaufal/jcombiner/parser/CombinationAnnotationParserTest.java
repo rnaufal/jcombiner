@@ -1,7 +1,7 @@
 package br.com.rnaufal.jcombiner.parser;
 
-import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
+import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import br.com.rnaufal.jcombiner.exception.InvalidCombinationFieldException;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,7 +13,6 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.hamcrest.collection.IsMapContaining.hasKey;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
@@ -52,10 +51,19 @@ class CombinationAnnotationParserTest {
 
         final var descriptor = optionalDescriptor.get();
         assertThat(descriptor.getResultClass(), is(equalTo(CombinationsClass.CombinationsTargetClass.class)));
-        assertThat(descriptor.getFieldDescriptorsByName(), is(notNullValue()));
-        assertThat(descriptor.getFieldDescriptorsByName().values(), hasSize(2));
-        assertThat(descriptor.getFieldDescriptorsByName(), hasKey("strings"));
-        assertThat(descriptor.getFieldDescriptorsByName(), hasKey("integers"));
+        assertThat(descriptor.getFieldDescriptors(), is(notNullValue()));
+        assertThat(descriptor.getFieldDescriptors(), hasSize(2));
+
+        final var firstCombinationDescriptor = descriptor.getFieldDescriptors().get(0);
+        final var secondCombinationDescriptor = descriptor.getFieldDescriptors().get(1);
+
+        assertThat(firstCombinationDescriptor.getSourceField().getName(), is(equalTo("strings")));
+        assertThat(firstCombinationDescriptor.getTargetField().getName(), is(equalTo("strings")));
+        assertThat(firstCombinationDescriptor.getCombinationSize(), is(equalTo(2)));
+
+        assertThat(secondCombinationDescriptor.getSourceField().getName(), is(equalTo("integers")));
+        assertThat(secondCombinationDescriptor.getTargetField().getName(), is(equalTo("integers")));
+        assertThat(secondCombinationDescriptor.getCombinationSize(), is(equalTo(3)));
     }
 
     @Test

@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Collection;
 import java.util.Set;
 
+import static org.apache.commons.lang3.reflect.FieldUtils.getDeclaredField;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.is;
@@ -33,8 +34,8 @@ class CollectionFieldTypeValidatorTest {
     }
 
     @Test
-    void shouldReturnValidationErrorWhenFieldIsNotCollectionType() throws NoSuchFieldException {
-        final var integerField = IntegerFieldClass.class.getField("integerField");
+    void shouldReturnValidationErrorWhenFieldIsNotCollectionType() {
+        final var integerField = getDeclaredField(IntegerFieldClass.class, "integerField", true);
 
         final var fieldValidationResult = collectionFieldTypeValidator.validate(integerField, Object.class);
 
@@ -43,8 +44,8 @@ class CollectionFieldTypeValidatorTest {
     }
 
     @Test
-    void shouldReturnValidationErrorWhenFieldHasNotParameterizedType() throws NoSuchFieldException {
-        final var valuesField = InvalidCollectionClass.class.getField("values");
+    void shouldReturnValidationErrorWhenFieldHasNotParameterizedType() {
+        final var valuesField = getDeclaredField(InvalidCollectionClass.class, "values", true);
 
         final var fieldValidationResult = collectionFieldTypeValidator.validate(valuesField, Object.class);
 
@@ -53,11 +54,11 @@ class CollectionFieldTypeValidatorTest {
     }
 
     @Test
-    void shouldDelegateToNextValidatorWhenFieldTypeIsCollection() throws NoSuchFieldException {
-        final var stringsField = CollectionFieldClass.class.getField("strings");
+    void shouldDelegateToNextValidatorWhenFieldTypeIsCollection() {
+        final var stringsField = getDeclaredField(CollectionFieldClass.class, "strings", true);
 
-        when(nextFieldValidator.validate(stringsField, Object.class)).thenReturn(FieldValidationResult.ok(stringsField,
-                collectionFieldTypeValidator.getClass()));
+        when(nextFieldValidator.validate(stringsField, Object.class))
+                .thenReturn(FieldValidationResult.ok(stringsField, stringsField, collectionFieldTypeValidator.getClass()));
 
         final var fieldValidationResult = collectionFieldTypeValidator.validate(stringsField, Object.class);
 
@@ -67,16 +68,16 @@ class CollectionFieldTypeValidatorTest {
 
     private static class IntegerFieldClass {
 
-        public Integer integerField;
+        private Integer integerField;
     }
 
     private static class CollectionFieldClass {
 
-        public Set<String> strings;
+        private Set<String> strings;
     }
 
     private static class InvalidCollectionClass {
 
-        public Collection values;
+        private Collection values;
     }
 }

@@ -5,19 +5,18 @@ import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.exception.InvalidCombinationFieldException;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationDescriptor;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationsDescriptor;
-import br.com.rnaufal.jcombiner.validator.impl.CombinationsTargetFieldTypeValidator;
+import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.impl.CollectionFieldTypeValidator;
+import br.com.rnaufal.jcombiner.validator.impl.CombinationsTargetFieldTypeValidator;
 import br.com.rnaufal.jcombiner.validator.impl.FieldExistsOnTargetClassValidator;
-import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.impl.TargetFieldParameterizedTypeValidator;
 import br.com.rnaufal.jcombiner.validator.messages.ValidationMessages;
 import com.google.common.collect.Maps;
-import org.apache.commons.collections4.MapUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
@@ -69,56 +68,53 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
         return Optional.of(new CombinationsDescriptor(targetClass, buildDescriptorsByFieldName(validatedFieldsByName)));
     }
 
-    private Map<String, CombinationDescriptor> buildDescriptorsByFieldName(final Map<Boolean, Map<String, FieldValidationResult>> validatedFieldsByName) {
+    private List<CombinationDescriptor> buildDescriptorsByFieldName(final Map<Boolean, List<FieldValidationResult>> validatedFieldsByName) {
         return getValidFields(validatedFieldsByName)
-                .entrySet()
                 .stream()
-                .collect(Collectors.collectingAndThen(Collectors.toConcurrentMap(Map.Entry::getKey,
-                        this::buildCombinationDescriptor),
-                        Collections::unmodifiableMap));
+                .map(this::buildCombinationDescriptor)
+                .flatMap(Optional::stream)
+                .collect(Collectors.toUnmodifiableList());
     }
 
-    private CombinationDescriptor buildCombinationDescriptor(final Map.Entry<String, FieldValidationResult> entry) {
-        final var combinationAnnotation = entry
-                .getValue()
+    private Optional<CombinationDescriptor> buildCombinationDescriptor(final FieldValidationResult fieldValidationResult) {
+        final var combinationAnnotation = fieldValidationResult
                 .getField()
                 .getAnnotation(CombinationProperty.class);
 
-        return new CombinationDescriptor(entry.getKey(), combinationAnnotation.size());
+        return fieldValidationResult
+                .getTargetField()
+                .map(targetField -> new CombinationDescriptor(fieldValidationResult.getField(),
+                        targetField,
+                        combinationAnnotation.size()));
     }
 
-    private boolean hasCombinationProperties(final Map<Boolean, Map<String, FieldValidationResult>> validatedFields) {
+    private boolean hasCombinationProperties(final Map<Boolean, List<FieldValidationResult>> validatedFields) {
         return validatedFields
                 .values()
                 .stream()
-                .anyMatch(MapUtils::isNotEmpty);
+                .anyMatch(CollectionUtils::isNotEmpty);
     }
 
-    private Map<String, FieldValidationResult> getValidFields(final Map<Boolean, Map<String, FieldValidationResult>> fields) {
+    private List<FieldValidationResult> getValidFields(final Map<Boolean, List<FieldValidationResult>> fields) {
         return fields.get(true);
     }
 
-    private Optional<String> getErrorMessage(final Map<Boolean, Map<String, FieldValidationResult>> fields) {
+    private Optional<String> getErrorMessage(final Map<Boolean, List<FieldValidationResult>> fields) {
         final var errorMessage = fields.get(false)
-                .values()
                 .stream()
                 .map(validationMessages::getErrorMessage)
                 .flatMap(Optional::stream)
                 .reduce(StringUtils.EMPTY, (errorMsg, otherErrorMsg) -> errorMsg + "\n" + otherErrorMsg);
 
-        return !StringUtils.equals(errorMessage, StringUtils.EMPTY) ?
-                Optional.of(errorMessage) :
-                Optional.empty();
+        return StringUtils.equals(errorMessage, StringUtils.EMPTY) ? Optional.empty() : Optional.of(errorMessage);
     }
 
-    private Map<Boolean, Map<String, FieldValidationResult>> validateFields(final Class<?> clazz,
-                                                                            final Class<?> targetClass) {
+    private Map<Boolean, List<FieldValidationResult>> validateFields(final Class<?> clazz,
+                                                                     final Class<?> targetClass) {
         return Arrays
                 .stream(clazz.getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(CombinationProperty.class))
                 .map(field -> validator.validate(field, targetClass))
-                .collect(Collectors.collectingAndThen(Collectors.partitioningBy(FieldValidationResult::isValid,
-                        Collectors.toMap(fieldValidation -> fieldValidation.getField().getName(), Function.identity())),
-                        Collections::unmodifiableMap));
+                .collect(Collectors.partitioningBy(FieldValidationResult::isValid, Collectors.toUnmodifiableList()));
     }
 }
