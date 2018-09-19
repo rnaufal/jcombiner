@@ -23,6 +23,7 @@ public class CombinationsImpl<T> implements Combinations<T> {
         this.values.addAll(combinations.stream().collect(Collectors.toUnmodifiableList()));
     }
 
+    @Override
     public Stream<Combination<T>> stream() {
         return values.stream();
     }

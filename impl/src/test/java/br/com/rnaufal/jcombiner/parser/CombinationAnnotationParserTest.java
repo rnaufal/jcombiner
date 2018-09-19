@@ -46,24 +46,24 @@ class CombinationAnnotationParserTest {
             }
         }
 
-        final var optionalDescriptor = annotationParser.parse(CombinationsClass.class);
+        final var optionalDescriptor = annotationParser.parse(new CombinationsClass());
         assertThat(optionalDescriptor.isPresent(), is(equalTo(true)));
 
         final var descriptor = optionalDescriptor.get();
         assertThat(descriptor.getResultClass(), is(equalTo(CombinationsClass.CombinationsTargetClass.class)));
-        assertThat(descriptor.getFieldDescriptors(), is(notNullValue()));
-        assertThat(descriptor.getFieldDescriptors(), hasSize(2));
+        assertThat(descriptor.getCombinationFields(), is(notNullValue()));
+        assertThat(descriptor.getCombinationFields(), hasSize(2));
 
-        final var firstCombinationDescriptor = descriptor.getFieldDescriptors().get(0);
-        final var secondCombinationDescriptor = descriptor.getFieldDescriptors().get(1);
+        final var firstCombinationField = descriptor.getCombinationFields().get(0);
+        final var secondCombinationField = descriptor.getCombinationFields().get(1);
 
-        assertThat(firstCombinationDescriptor.getSourceField().getName(), is(equalTo("strings")));
-        assertThat(firstCombinationDescriptor.getTargetField().getName(), is(equalTo("strings")));
-        assertThat(firstCombinationDescriptor.getCombinationSize(), is(equalTo(2)));
+        assertThat(firstCombinationField.getSourceField().getName(), is(equalTo("strings")));
+        assertThat(firstCombinationField.getTargetField().getName(), is(equalTo("strings")));
+        assertThat(firstCombinationField.getCombinationSize(), is(equalTo(2)));
 
-        assertThat(secondCombinationDescriptor.getSourceField().getName(), is(equalTo("integers")));
-        assertThat(secondCombinationDescriptor.getTargetField().getName(), is(equalTo("integers")));
-        assertThat(secondCombinationDescriptor.getCombinationSize(), is(equalTo(3)));
+        assertThat(secondCombinationField.getSourceField().getName(), is(equalTo("integers")));
+        assertThat(secondCombinationField.getTargetField().getName(), is(equalTo("integers")));
+        assertThat(secondCombinationField.getCombinationSize(), is(equalTo(3)));
     }
 
     @Test
@@ -85,7 +85,7 @@ class CombinationAnnotationParserTest {
             }
         }
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(CombinationsClass.class));
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass()));
     }
 
     @Test
@@ -107,7 +107,7 @@ class CombinationAnnotationParserTest {
             }
         }
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(CombinationsClass.class));
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass()));
     }
 
     @Test
@@ -122,7 +122,7 @@ class CombinationAnnotationParserTest {
             private Collection<Integer> integers;
         }
 
-        final var optionalDescriptor = annotationParser.parse(CombinationsClass.class);
+        final var optionalDescriptor = annotationParser.parse(new CombinationsClass());
         assertThat(optionalDescriptor.isPresent(), is(equalTo(false)));
     }
 
@@ -140,7 +140,7 @@ class CombinationAnnotationParserTest {
             }
         }
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(CombinationsClass.class));
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass()));
     }
 
     @Test
@@ -168,6 +168,6 @@ class CombinationAnnotationParserTest {
             }
         }
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(InvalidCombinationsClass.class));
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new InvalidCombinationsClass()));
     }
 }

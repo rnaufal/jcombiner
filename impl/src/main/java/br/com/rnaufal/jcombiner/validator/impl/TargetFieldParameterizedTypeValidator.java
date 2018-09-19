@@ -38,11 +38,11 @@ public class TargetFieldParameterizedTypeValidator implements FieldValidator {
 
     private Optional<String> getActualTypeArgument(final Field field) {
         final var genericType = field.getGenericType();
-        if (genericType instanceof ParameterizedType) {
-            final var parameterizedType = (ParameterizedType) genericType;
-            return Optional.of(parameterizedType.getActualTypeArguments()[0].getTypeName());
+        if (!(genericType instanceof ParameterizedType)) {
+            return Optional.empty();
         }
-        return Optional.empty();
+        final var parameterizedType = (ParameterizedType) genericType;
+        return Optional.of(parameterizedType.getActualTypeArguments()[0].getTypeName());
     }
 
     @Override

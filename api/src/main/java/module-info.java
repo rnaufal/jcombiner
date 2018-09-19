@@ -6,4 +6,6 @@ module api.main {
     exports br.com.rnaufal.jcombiner.api.domain;
 
     exports br.com.rnaufal.jcombiner.api.annotation;
+
+    exports br.com.rnaufal.jcombiner.api;
 }

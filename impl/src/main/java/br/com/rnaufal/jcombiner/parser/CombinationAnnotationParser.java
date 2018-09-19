@@ -1,6 +1,6 @@
 package br.com.rnaufal.jcombiner.parser;
 
-import br.com.rnaufal.jcombiner.impl.domain.CombinationsDescriptor;
+import br.com.rnaufal.jcombiner.impl.domain.CombinationClassDescriptor;
 
 import java.util.Optional;
 
@@ -9,5 +9,5 @@ import java.util.Optional;
  */
 public interface CombinationAnnotationParser {
 
-    Optional<CombinationsDescriptor> parse(final Class<?> clazz);
+    <T> Optional<CombinationClassDescriptor> parse(final T object);
 }
