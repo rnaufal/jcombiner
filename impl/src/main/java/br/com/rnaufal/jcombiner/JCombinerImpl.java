@@ -33,7 +33,7 @@ public class JCombinerImpl<R> implements JCombiner<R> {
         Objects.requireNonNull(arg, "Object source should not be null");
 
         return combinationAnnotationParser
-                .parse(arg, targetClass)
+                .parse(arg.getClass(), targetClass)
                 .getCombinationFields()
                 .stream()
                 .map(combinationField -> generateCombinations(combinationField, arg))
@@ -49,5 +49,4 @@ public class JCombinerImpl<R> implements JCombiner<R> {
         final Combinations<?> combinations = combinationsGenerator.generate();
         return Map.entry(combinationField, combinations);
     }
-
 }

@@ -7,5 +7,6 @@ import br.com.rnaufal.jcombiner.impl.domain.CombinationClass;
  */
 public interface CombinationAnnotationParser<R> {
 
-    <T> CombinationClass<R> parse(final T object, final Class<R> targetClass);
+    <T> CombinationClass<R> parse(final Class<T> sourceClass,
+                                  final Class<R> targetClass);
 }

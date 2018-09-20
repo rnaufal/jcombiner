@@ -38,7 +38,7 @@ class CombinationAnnotationParserTest {
 
         final var annotationParser = new CombinationAnnotationParserImpl<CombinationsClass.CombinationsTargetClass>();
 
-        final var combinationClass = annotationParser.parse(new CombinationsClass(), CombinationsClass.CombinationsTargetClass.class);
+        final var combinationClass = annotationParser.parse(CombinationsClass.class, CombinationsClass.CombinationsTargetClass.class);
         assertThat(combinationClass, is(notNullValue()));
 
         assertThat(combinationClass.getResultClass(), is(equalTo(CombinationsClass.CombinationsTargetClass.class)));
@@ -77,7 +77,8 @@ class CombinationAnnotationParserTest {
 
         final var annotationParser = new CombinationAnnotationParserImpl<CombinationsClass.InvalidTargetFieldTypeCombinationsClass>();
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass(), CombinationsClass.InvalidTargetFieldTypeCombinationsClass.class));
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(CombinationsClass.class,
+                CombinationsClass.InvalidTargetFieldTypeCombinationsClass.class));
     }
 
     @Test
@@ -100,7 +101,8 @@ class CombinationAnnotationParserTest {
 
         final var annotationParser = new CombinationAnnotationParserImpl<CombinationsClass.TargetFieldTypeParametersMissingClass>();
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass(), CombinationsClass.TargetFieldTypeParametersMissingClass.class));
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(CombinationsClass.class,
+                CombinationsClass.TargetFieldTypeParametersMissingClass.class));
     }
 
     @Test
@@ -118,7 +120,8 @@ class CombinationAnnotationParserTest {
 
         final var annotationParser = new CombinationAnnotationParserImpl<CombinationsClass.CombinationsTargetClass>();
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass(), CombinationsClass.CombinationsTargetClass.class));
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(CombinationsClass.class,
+                CombinationsClass.CombinationsTargetClass.class));
     }
 
     @Test
@@ -147,6 +150,7 @@ class CombinationAnnotationParserTest {
 
         final var annotationParser = new CombinationAnnotationParserImpl<InvalidCombinationsClass.CombinationsTargetClass>();
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new InvalidCombinationsClass(), InvalidCombinationsClass.CombinationsTargetClass.class));
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(InvalidCombinationsClass.class,
+                InvalidCombinationsClass.CombinationsTargetClass.class));
     }
 }

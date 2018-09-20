@@ -102,7 +102,7 @@ class JCombinerImplTest {
         final var combinationField = new CombinationField(getNumbersSourceField(), getNumbersTargetField(), 5);
 
         when(combinationClass.getCombinationFields()).thenReturn(List.of(combinationField));
-        when(annotationParser.parse(eq(numbersCombination), eq(TargetCombinationsClass.class))).thenReturn(combinationClass);
+        when(annotationParser.parse(eq(NumbersCombination.class), eq(TargetCombinationsClass.class))).thenReturn(combinationClass);
 
         final JCombiner<TargetCombinationsClass> jCombiner = new JCombinerImpl<>(annotationParser);
         assertThrows(InvalidCombinationFieldException.class, () -> jCombiner.parseCombinations(numbersCombination, TargetCombinationsClass.class));

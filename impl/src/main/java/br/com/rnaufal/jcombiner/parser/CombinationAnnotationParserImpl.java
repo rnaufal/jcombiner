@@ -38,10 +38,11 @@ public class CombinationAnnotationParserImpl<R> implements CombinationAnnotation
     }
 
     @Override
-    public <T> CombinationClass<R> parse(final T object, final Class<R> targetClass) {
-        Objects.requireNonNull(object, "Object should not be null");
+    public <T> CombinationClass<R> parse(final Class<T> sourceClass,
+                                         final Class<R> targetClass) {
+        Objects.requireNonNull(sourceClass, "sourceClass cannot be null");
 
-        return descriptorsByClass.computeIfAbsent(object.getClass(), clazz -> buildDescriptor(clazz, targetClass));
+        return descriptorsByClass.computeIfAbsent(sourceClass, clazz -> buildDescriptor(clazz, targetClass));
     }
 
     private CombinationClass<R> buildDescriptor(final Class<?> sourceClass,
@@ -49,7 +50,8 @@ public class CombinationAnnotationParserImpl<R> implements CombinationAnnotation
         final var validatedFieldsByName = validateFields(sourceClass, targetClass);
 
         if (!hasCombinationProperties(validatedFieldsByName)) {
-            throw new InvalidCombinationFieldException("Target result class [" + targetClass + "] has no Combination properties");
+            throw new InvalidCombinationFieldException("Target result class [" + targetClass.getSimpleName()
+                    + "] has no Combination properties");
         }
 
         getErrorMessage(validatedFieldsByName)
