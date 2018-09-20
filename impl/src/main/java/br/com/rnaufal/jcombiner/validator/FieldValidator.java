@@ -11,7 +11,7 @@ import java.lang.reflect.Field;
  */
 public interface FieldValidator {
 
-    FieldValidationResult validate(Field field, Class<?> targetClass);
+    <R> FieldValidationResult validate(Field field, Class<R> targetClass);
 
     String getErrorMessage();
 
@@ -19,7 +19,7 @@ public interface FieldValidator {
         validationMessages.add(this);
     }
 
-    default Field getTargetField(final Field field, final Class<?> targetClass) {
+    default <R> Field getTargetField(final Field field, final Class<R> targetClass) {
         final var combinationAnnotation = field.getAnnotation(CombinationProperty.class);
 
         final var targetFieldName = combinationAnnotation.name().equals("") ?

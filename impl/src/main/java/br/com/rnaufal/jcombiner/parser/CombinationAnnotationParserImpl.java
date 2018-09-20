@@ -1,10 +1,9 @@
 package br.com.rnaufal.jcombiner.parser;
 
-import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.exception.InvalidCombinationFieldException;
+import br.com.rnaufal.jcombiner.impl.domain.CombinationClass;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationField;
-import br.com.rnaufal.jcombiner.impl.domain.CombinationClassDescriptor;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.impl.CollectionFieldTypeValidator;
@@ -22,9 +21,9 @@ import java.util.stream.Collectors;
 /**
  * Created by rnaufal
  */
-public class CombinationAnnotationParserImpl implements CombinationAnnotationParser {
+public class CombinationAnnotationParserImpl<R> implements CombinationAnnotationParser<R> {
 
-    private final Map<Class<?>, Optional<CombinationClassDescriptor>> descriptorsByClass;
+    private final Map<Class<?>, CombinationClass<R>> descriptorsByClass;
 
     private final FieldValidator validator;
 
@@ -39,26 +38,18 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
     }
 
     @Override
-    public <T> Optional<CombinationClassDescriptor> parse(final T object) {
+    public <T> CombinationClass<R> parse(final T object, final Class<R> targetClass) {
         Objects.requireNonNull(object, "Object should not be null");
 
-        return descriptorsByClass.computeIfAbsent(object.getClass(), clazz -> buildDescriptor(object, clazz));
+        return descriptorsByClass.computeIfAbsent(object.getClass(), clazz -> buildDescriptor(clazz, targetClass));
     }
 
-    private <T> Optional<CombinationClassDescriptor> buildDescriptor(final T object,
-                                                                     final Class<?> clazz) {
-        final var combinationsAnnotation = clazz.getAnnotation(CombinationClass.class);
-
-        if (combinationsAnnotation == null) {
-            return Optional.empty();
-        }
-
-        final Class<?> targetClass = combinationsAnnotation.value();
-
-        final var validatedFieldsByName = validateFields(clazz, targetClass);
+    private CombinationClass<R> buildDescriptor(final Class<?> sourceClass,
+                                                final Class<R> targetClass) {
+        final var validatedFieldsByName = validateFields(sourceClass, targetClass);
 
         if (!hasCombinationProperties(validatedFieldsByName)) {
-            throw new InvalidCombinationFieldException("Target result class [" + targetClass + "] has no fields mapped");
+            throw new InvalidCombinationFieldException("Target result class [" + targetClass + "] has no Combination properties");
         }
 
         getErrorMessage(validatedFieldsByName)
@@ -66,7 +57,7 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
                     throw new InvalidCombinationFieldException(errorMessage);
                 });
 
-        return Optional.of(new CombinationClassDescriptor(object, targetClass, buildCombinationFields(validatedFieldsByName)));
+        return new CombinationClass<>(targetClass, buildCombinationFields(validatedFieldsByName));
     }
 
     private List<CombinationField> buildCombinationFields(final Map<Boolean, List<FieldValidationResult>> validatedFieldsByName) {
@@ -78,9 +69,7 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
     }
 
     private Optional<CombinationField> buildCombinationField(final FieldValidationResult fieldValidationResult) {
-        final var combinationAnnotation = fieldValidationResult
-                .getField()
-                .getAnnotation(CombinationProperty.class);
+        final var combinationAnnotation = fieldValidationResult.getField().getAnnotation(CombinationProperty.class);
 
         return fieldValidationResult
                 .getTargetField()
@@ -111,7 +100,7 @@ public class CombinationAnnotationParserImpl implements CombinationAnnotationPar
     }
 
     private Map<Boolean, List<FieldValidationResult>> validateFields(final Class<?> clazz,
-                                                                     final Class<?> targetClass) {
+                                                                     final Class<R> targetClass) {
         return Arrays
                 .stream(clazz.getDeclaredFields())
                 .filter(field -> field.isAnnotationPresent(CombinationProperty.class))

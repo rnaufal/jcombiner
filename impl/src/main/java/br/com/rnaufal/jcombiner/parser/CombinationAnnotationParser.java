@@ -1,13 +1,11 @@
 package br.com.rnaufal.jcombiner.parser;
 
-import br.com.rnaufal.jcombiner.impl.domain.CombinationClassDescriptor;
-
-import java.util.Optional;
+import br.com.rnaufal.jcombiner.impl.domain.CombinationClass;
 
 /**
  * Created by rnaufal
  */
-public interface CombinationAnnotationParser {
+public interface CombinationAnnotationParser<R> {
 
-    <T> Optional<CombinationClassDescriptor> parse(final T object);
+    <T> CombinationClass<R> parse(final T object, final Class<R> targetClass);
 }

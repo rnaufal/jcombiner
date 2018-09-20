@@ -17,18 +17,17 @@ import java.util.stream.Collector;
  */
 public class TargetInstanceCombinationsCollector<R> implements Collector<Map.Entry<CombinationField, Combinations<?>>, R, R> {
 
-    private final Class<?> resultClass;
+    private final Class<R> resultClass;
 
-    TargetInstanceCombinationsCollector(final Class<?> resultClass) {
+    TargetInstanceCombinationsCollector(final Class<R> resultClass) {
         this.resultClass = resultClass;
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     public Supplier<R> supplier() {
         return () -> {
             try {
-                return (R) resultClass.getConstructor().newInstance();
+                return resultClass.getConstructor().newInstance();
             } catch (final Exception e) {
                 throw new InvalidCombinationClassException("No default construct found for class " +
                         resultClass.getSimpleName(), e);

@@ -1,12 +1,12 @@
 package br.com.rnaufal.jcombiner;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
  * Created by rnaufal
@@ -24,7 +24,7 @@ class TargetInstanceCombinationsCollectorTest {
     void throwExceptionWhenCombinerIsInvoked() {
         final var combiner = targetInstanceCombinationsCollector.combiner();
 
-        Assertions.assertThrows(UnsupportedOperationException.class, () -> combiner.apply(new Object() , new Object()));
+        assertThrows(UnsupportedOperationException.class, () -> combiner.apply(new Object() , new Object()));
     }
 
     @Test

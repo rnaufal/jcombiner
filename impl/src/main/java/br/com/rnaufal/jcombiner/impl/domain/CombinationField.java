@@ -40,7 +40,7 @@ public class CombinationField {
         return combinationSize;
     }
 
-    public Collection<?> getSourceFieldValue(final Object sourceObject) {
+    public <T> Collection<?> getSourceFieldValue(final T sourceObject) {
         try {
             return (Collection<?>) readField(sourceField, sourceObject, true);
         } catch (Exception e) {

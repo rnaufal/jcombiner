@@ -16,8 +16,8 @@ public class TargetFieldParameterizedTypeValidator implements FieldValidator {
     private static final String FIELD_PARAMETERIZED_TYPE_ON_TARGET_CLASS_ERROR = "Field [%s] has different parameterized type on target class!";
 
     @Override
-    public FieldValidationResult validate(final Field field,
-                                          final Class<?> targetClass) {
+    public <R> FieldValidationResult validate(final Field field,
+                                              final Class<R> targetClass) {
         final var targetField = getTargetField(field, targetClass);
 
         return getActualTypeArgument(field)

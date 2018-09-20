@@ -22,8 +22,8 @@ public class CombinationsTargetFieldTypeValidator implements FieldValidator {
     }
 
     @Override
-    public FieldValidationResult validate(final Field field,
-                                          final Class<?> targetClass) {
+    public <R> FieldValidationResult validate(final Field field,
+                                              final Class<R> targetClass) {
         final var targetField = getTargetField(field, targetClass);
 
         return targetField.getType() == Combinations.class ?

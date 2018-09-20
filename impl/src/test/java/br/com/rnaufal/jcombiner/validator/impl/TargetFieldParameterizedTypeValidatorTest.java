@@ -1,6 +1,5 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
-import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import org.junit.jupiter.api.BeforeEach;
@@ -66,7 +65,6 @@ class TargetFieldParameterizedTypeValidatorTest {
         assertThat(actualResult.getField().getName(), is(equalTo("numbers")));
     }
 
-    @CombinationClass(ValidCombinationClass.TargetCombinationClass.class)
     private static class ValidCombinationClass {
 
         @CombinationProperty(size = 3)
@@ -83,7 +81,6 @@ class TargetFieldParameterizedTypeValidatorTest {
         }
     }
 
-    @CombinationClass(InvalidSourceStringsCombinationClass.TargetCombinationClass.class)
     private static class InvalidSourceStringsCombinationClass {
 
         @CombinationProperty(size = 4)
@@ -95,7 +92,6 @@ class TargetFieldParameterizedTypeValidatorTest {
         }
     }
 
-    @CombinationClass(InvalidFloatCombinationClass.InvalidTypeArgumentTargetCombinationClass.class)
     private static class InvalidFloatCombinationClass {
 
         @CombinationProperty(size = 5)

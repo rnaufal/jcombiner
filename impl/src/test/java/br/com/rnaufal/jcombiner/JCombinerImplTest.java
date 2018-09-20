@@ -1,22 +1,22 @@
 package br.com.rnaufal.jcombiner;
 
 import br.com.rnaufal.jcombiner.api.JCombiner;
-import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.domain.Combination;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import br.com.rnaufal.jcombiner.exception.InvalidCombinationClassException;
 import br.com.rnaufal.jcombiner.exception.InvalidCombinationFieldException;
-import br.com.rnaufal.jcombiner.impl.domain.CombinationClassDescriptor;
+import br.com.rnaufal.jcombiner.impl.domain.CombinationClass;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationField;
 import br.com.rnaufal.jcombiner.parser.CombinationAnnotationParser;
 import com.google.common.collect.Sets;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -26,18 +26,24 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
  * Created by rnaufal
  */
+@ExtendWith(MockitoExtension.class)
 class JCombinerImplTest {
+
+    @Mock
+    private CombinationAnnotationParser<TargetCombinationsClass> annotationParser;
+
+    @Mock
+    private CombinationClass<TargetCombinationsClass> combinationClass;
 
     @Test
     void shouldGenerateCombinationsForEachFieldSuccessfully() {
-        @CombinationClass(TargetCombinationsClass.class)
         class CombinationsClass {
 
             @CombinationProperty(size = 2)
@@ -47,8 +53,8 @@ class JCombinerImplTest {
             private Set<String> strings = Sets.newLinkedHashSet(List.of("a", "b", "c", "d"));
         }
 
-        final JCombiner jCombiner = new JCombinerImpl();
-        final var result = (TargetCombinationsClass) jCombiner.parseCombinations(new CombinationsClass());
+        final var jCombiner = new JCombinerImpl<TargetCombinationsClass>();
+        final var result = jCombiner.parseCombinations(new CombinationsClass(), TargetCombinationsClass.class);
 
         final var integerCombinations = combinationsToNestedList(result.getIntegers());
         assertThat(integerCombinations, hasSize(6));
@@ -63,7 +69,6 @@ class JCombinerImplTest {
 
     @Test
     void throwExceptionWhenAnErrorWhileCreatingTargetClassInstance() {
-        @CombinationClass(StringCombinationClass.TargetStringCombinationClass.class)
         class StringCombinationClass {
 
             @CombinationProperty(size = 4)
@@ -75,54 +80,32 @@ class JCombinerImplTest {
             }
         }
 
-        final JCombiner jCombiner = new JCombinerImpl();
-        assertThrows(InvalidCombinationClassException.class, () -> jCombiner.parseCombinations(new StringCombinationClass()));
-    }
-
-    @Test
-    void throwExceptionWhenNoCombinationClassDescriptorIsGenerated() {
-        final var combinationAnnotationParser = mock(CombinationAnnotationParser.class);
-        when(combinationAnnotationParser.parse(Object.class)).thenReturn(Optional.empty());
-
-        final JCombiner jCombiner = new JCombinerImpl(combinationAnnotationParser);
-
-        assertThrows(InvalidCombinationClassException.class, () -> jCombiner.parseCombinations(Object.class));
+        final var jCombiner = new JCombinerImpl<StringCombinationClass.TargetStringCombinationClass>();
+        assertThrows(InvalidCombinationClassException.class, () -> jCombiner.parseCombinations(new StringCombinationClass(), StringCombinationClass.TargetStringCombinationClass.class));
     }
 
     @Test
     void throwExceptionWhileTryingToGetFieldValueFromSourceObject() {
-        final var descriptor = new CombinationField(getNumbersSourceField(), getNumbersTargetField(), 5);
+        final var combinationField = new CombinationField(getNumbersSourceField(), getNumbersTargetField(), 5);
 
-        final var classDescriptor = mock(CombinationClassDescriptor.class);
-        when(classDescriptor.getCombinationFields()).thenReturn(List.of(descriptor));
-        when(classDescriptor.getSourceObject()).thenReturn(new Object());
-        Mockito.<Class<?>>when(classDescriptor.getResultClass()).thenReturn(TargetCombinationsClass.class);
+        when(combinationClass.getCombinationFields()).thenReturn(List.of(combinationField));
+        when(annotationParser.parse(any(), eq(TargetCombinationsClass.class))).thenReturn(combinationClass);
 
-
-        final var combinationAnnotationParser = mock(CombinationAnnotationParser.class);
-        final var numbersCombination = new NumbersCombination();
-        when(combinationAnnotationParser.parse(eq(numbersCombination))).thenReturn(Optional.of(classDescriptor));
-
-        final JCombiner jCombiner = new JCombinerImpl(combinationAnnotationParser);
-        assertThrows(InvalidCombinationFieldException.class, () -> jCombiner.parseCombinations(numbersCombination));
+        final JCombiner<TargetCombinationsClass> jCombiner = new JCombinerImpl<>(annotationParser);
+        assertThrows(InvalidCombinationFieldException.class, () -> jCombiner.parseCombinations(new Object(), TargetCombinationsClass.class));
     }
 
     @Test
     void shouldThrowExceptionWhenTryingToWriteValueOnTargetField() {
         final var numbersCombination = new NumbersCombination();
 
-        final var descriptor = new CombinationField(getNumbersSourceField(), getNumbersTargetField(), 5);
+        final var combinationField = new CombinationField(getNumbersSourceField(), getNumbersTargetField(), 5);
 
-        final var classDescriptor = mock(CombinationClassDescriptor.class);
-        when(classDescriptor.getCombinationFields()).thenReturn(List.of(descriptor));
-        when(classDescriptor.getSourceObject()).thenReturn(numbersCombination);
-        Mockito.<Class<?>>when(classDescriptor.getResultClass()).thenReturn(TargetCombinationsClass.class);
+        when(combinationClass.getCombinationFields()).thenReturn(List.of(combinationField));
+        when(annotationParser.parse(eq(numbersCombination), eq(TargetCombinationsClass.class))).thenReturn(combinationClass);
 
-        final var combinationAnnotationParser = mock(CombinationAnnotationParser.class);
-        when(combinationAnnotationParser.parse(eq(numbersCombination))).thenReturn(Optional.of(classDescriptor));
-
-        final JCombiner jCombiner = new JCombinerImpl(combinationAnnotationParser);
-        assertThrows(InvalidCombinationFieldException.class, () -> jCombiner.parseCombinations(numbersCombination));
+        final JCombiner<TargetCombinationsClass> jCombiner = new JCombinerImpl<>(annotationParser);
+        assertThrows(InvalidCombinationFieldException.class, () -> jCombiner.parseCombinations(numbersCombination, TargetCombinationsClass.class));
     }
 
     private Field getNumbersTargetField() {
@@ -141,7 +124,6 @@ class JCombinerImplTest {
                 .collect(Collectors.toList());
     }
 
-    @CombinationClass(TargetCombinationsClass.class)
     private class NumbersCombination {
 
         @CombinationProperty(size = 2)

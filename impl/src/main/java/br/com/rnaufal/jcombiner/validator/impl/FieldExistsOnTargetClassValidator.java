@@ -21,8 +21,8 @@ public class FieldExistsOnTargetClassValidator implements FieldValidator {
     }
 
     @Override
-    public FieldValidationResult validate(final Field field,
-                                          final Class<?> targetClass) {
+    public <R> FieldValidationResult validate(final Field field,
+                                              final Class<R> targetClass) {
         return existsFieldOnTargetClass(field, targetClass) ?
                 nextValidator.validate(field, targetClass) :
                 FieldValidationResult.error(field, getClass());
@@ -40,8 +40,8 @@ public class FieldExistsOnTargetClassValidator implements FieldValidator {
         return FIELD_NOT_EXISTS_ON_TARGET_CLASS_ERROR;
     }
 
-    private boolean existsFieldOnTargetClass(final Field field,
-                                             final Class<?> targetClass) {
+    private <R> boolean existsFieldOnTargetClass(final Field field,
+                                                 final Class<R> targetClass) {
         return getTargetField(field, targetClass) != null;
     }
 }

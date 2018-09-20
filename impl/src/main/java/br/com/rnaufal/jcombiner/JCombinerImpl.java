@@ -2,10 +2,8 @@ package br.com.rnaufal.jcombiner;
 
 import br.com.rnaufal.jcombiner.api.JCombiner;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
-import br.com.rnaufal.jcombiner.exception.InvalidCombinationClassException;
 import br.com.rnaufal.jcombiner.impl.combiner.CombinationsGenerator;
 import br.com.rnaufal.jcombiner.impl.combiner.IterativeCombinationsGenerator;
-import br.com.rnaufal.jcombiner.impl.domain.CombinationClassDescriptor;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationField;
 import br.com.rnaufal.jcombiner.parser.CombinationAnnotationParser;
 import br.com.rnaufal.jcombiner.parser.CombinationAnnotationParserImpl;
@@ -18,38 +16,32 @@ import java.util.Objects;
 /**
  * Created by rnaufal
  */
-public class JCombinerImpl implements JCombiner {
+public class JCombinerImpl<R> implements JCombiner<R> {
 
-    private final CombinationAnnotationParser combinationAnnotationParser;
+    private final CombinationAnnotationParser<R> combinationAnnotationParser;
 
     public JCombinerImpl() {
-        this(new CombinationAnnotationParserImpl());
+        this(new CombinationAnnotationParserImpl<>());
     }
 
-    JCombinerImpl(final CombinationAnnotationParser combinationAnnotationParser) {
+    JCombinerImpl(final CombinationAnnotationParser<R> combinationAnnotationParser) {
         this.combinationAnnotationParser = combinationAnnotationParser;
     }
 
     @Override
-    public <T, R> R parseCombinations(final T arg) {
+    public <T> R parseCombinations(final T arg, final Class<R> targetClass) {
         Objects.requireNonNull(arg, "Object source should not be null");
 
         return combinationAnnotationParser
-                .parse(arg)
-                .map(this::<R>generateCombinations)
-                .orElseThrow(() -> new InvalidCombinationClassException("[" + arg.getClass().getSimpleName() + "] " +
-                        "is not a valid Combination class"));
-    }
-
-    private <R> R generateCombinations(final CombinationClassDescriptor combinationClassDescriptor) {
-        return combinationClassDescriptor.getCombinationFields()
+                .parse(arg, targetClass)
+                .getCombinationFields()
                 .stream()
-                .map(combinationFieldDescriptor -> generateCombinations(combinationFieldDescriptor, combinationClassDescriptor.getSourceObject()))
-                .collect(new TargetInstanceCombinationsCollector<>(combinationClassDescriptor.getResultClass()));
+                .map(combinationField -> generateCombinations(combinationField, arg))
+                .collect(new TargetInstanceCombinationsCollector<>(targetClass));
     }
 
-    private Entry<CombinationField, Combinations<?>> generateCombinations(final CombinationField combinationField,
-                                                                          final Object sourceObject) {
+    private <T> Entry<CombinationField, Combinations<?>> generateCombinations(final CombinationField combinationField,
+                                                                              final T sourceObject) {
         final Collection<?> fieldValue = combinationField
                 .getSourceFieldValue(sourceObject);
         final CombinationsGenerator<?> combinationsGenerator = new IterativeCombinationsGenerator<>(fieldValue,

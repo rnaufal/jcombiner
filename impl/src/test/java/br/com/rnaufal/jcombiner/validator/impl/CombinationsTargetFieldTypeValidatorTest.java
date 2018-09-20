@@ -1,6 +1,5 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
-import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
@@ -75,7 +74,6 @@ class CombinationsTargetFieldTypeValidatorTest {
         assertThat(actualResult.getField().getName(), is(equalTo("strings")));
     }
 
-    @CombinationClass(ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class)
     private static class ValidIntegersCombinationClass {
 
         @CombinationProperty(size = 2)
@@ -92,7 +90,6 @@ class CombinationsTargetFieldTypeValidatorTest {
         }
     }
 
-    @CombinationClass(InvalidStringsCombinationClass.InvalidTargetStringsCombinationClass.class)
     private static class InvalidStringsCombinationClass {
 
         @CombinationProperty(size = 2)

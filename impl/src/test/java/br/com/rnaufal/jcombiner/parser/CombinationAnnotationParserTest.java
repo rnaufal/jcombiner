@@ -1,10 +1,8 @@
 package br.com.rnaufal.jcombiner.parser;
 
-import br.com.rnaufal.jcombiner.api.annotation.CombinationClass;
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import br.com.rnaufal.jcombiner.exception.InvalidCombinationFieldException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collection;
@@ -20,17 +18,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
  */
 class CombinationAnnotationParserTest {
 
-    private CombinationAnnotationParser annotationParser;
-
-    @BeforeEach
-    void setUp() {
-        annotationParser = new CombinationAnnotationParserImpl();
-    }
-
     @Test
     void shouldParseClassWithCombinationsAnnotationSuccessfully() {
 
-        @CombinationClass(CombinationsClass.CombinationsTargetClass.class)
         class CombinationsClass {
 
             @CombinationProperty(size = 2)
@@ -46,16 +36,17 @@ class CombinationAnnotationParserTest {
             }
         }
 
-        final var optionalDescriptor = annotationParser.parse(new CombinationsClass());
-        assertThat(optionalDescriptor.isPresent(), is(equalTo(true)));
+        final var annotationParser = new CombinationAnnotationParserImpl<CombinationsClass.CombinationsTargetClass>();
 
-        final var descriptor = optionalDescriptor.get();
-        assertThat(descriptor.getResultClass(), is(equalTo(CombinationsClass.CombinationsTargetClass.class)));
-        assertThat(descriptor.getCombinationFields(), is(notNullValue()));
-        assertThat(descriptor.getCombinationFields(), hasSize(2));
+        final var combinationClass = annotationParser.parse(new CombinationsClass(), CombinationsClass.CombinationsTargetClass.class);
+        assertThat(combinationClass, is(notNullValue()));
 
-        final var firstCombinationField = descriptor.getCombinationFields().get(0);
-        final var secondCombinationField = descriptor.getCombinationFields().get(1);
+        assertThat(combinationClass.getResultClass(), is(equalTo(CombinationsClass.CombinationsTargetClass.class)));
+        assertThat(combinationClass.getCombinationFields(), is(notNullValue()));
+        assertThat(combinationClass.getCombinationFields(), hasSize(2));
+
+        final var firstCombinationField = combinationClass.getCombinationFields().get(0);
+        final var secondCombinationField = combinationClass.getCombinationFields().get(1);
 
         assertThat(firstCombinationField.getSourceField().getName(), is(equalTo("strings")));
         assertThat(firstCombinationField.getTargetField().getName(), is(equalTo("strings")));
@@ -69,7 +60,6 @@ class CombinationAnnotationParserTest {
     @Test
     void shouldThrowExceptionWhenTargetFieldTypesAreInvalid() {
 
-        @CombinationClass(CombinationsClass.InvalidTargetFieldTypeCombinationsClass.class)
         class CombinationsClass {
 
             @CombinationProperty(size = 2)
@@ -85,13 +75,14 @@ class CombinationAnnotationParserTest {
             }
         }
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass()));
+        final var annotationParser = new CombinationAnnotationParserImpl<CombinationsClass.InvalidTargetFieldTypeCombinationsClass>();
+
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass(), CombinationsClass.InvalidTargetFieldTypeCombinationsClass.class));
     }
 
     @Test
     void shouldThrowExceptionWhenTargetFieldTypesTypeParametersAreMissing() {
 
-        @CombinationClass(CombinationsClass.TargetFieldTypeParametersMissingClass.class)
         class CombinationsClass {
 
             @CombinationProperty(size = 2)
@@ -107,29 +98,14 @@ class CombinationAnnotationParserTest {
             }
         }
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass()));
-    }
+        final var annotationParser = new CombinationAnnotationParserImpl<CombinationsClass.TargetFieldTypeParametersMissingClass>();
 
-    @Test
-    void shouldNotParseClassWithoutCombinationsAnnotation() {
-
-        class CombinationsClass {
-
-            @CombinationProperty(size = 2)
-            private List<String> strings;
-
-            @CombinationProperty(size = 3)
-            private Collection<Integer> integers;
-        }
-
-        final var optionalDescriptor = annotationParser.parse(new CombinationsClass());
-        assertThat(optionalDescriptor.isPresent(), is(equalTo(false)));
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass(), CombinationsClass.TargetFieldTypeParametersMissingClass.class));
     }
 
     @Test
     void shouldThrowExceptionWhenTargetClassHasNoCombinationFieldsMapped() {
 
-        @CombinationClass(CombinationsClass.CombinationsTargetClass.class)
         class CombinationsClass {
 
             private List<String> strings;
@@ -140,13 +116,14 @@ class CombinationAnnotationParserTest {
             }
         }
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass()));
+        final var annotationParser = new CombinationAnnotationParserImpl<CombinationsClass.CombinationsTargetClass>();
+
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new CombinationsClass(), CombinationsClass.CombinationsTargetClass.class));
     }
 
     @Test
     void shouldThrowExceptionWhenFieldsAreInvalid() {
 
-        @CombinationClass(InvalidCombinationsClass.CombinationsTargetClass.class)
         class InvalidCombinationsClass {
 
             @CombinationProperty(size = 3)
@@ -168,6 +145,8 @@ class CombinationAnnotationParserTest {
             }
         }
 
-        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new InvalidCombinationsClass()));
+        final var annotationParser = new CombinationAnnotationParserImpl<InvalidCombinationsClass.CombinationsTargetClass>();
+
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(new InvalidCombinationsClass(), InvalidCombinationsClass.CombinationsTargetClass.class));
     }
 }
