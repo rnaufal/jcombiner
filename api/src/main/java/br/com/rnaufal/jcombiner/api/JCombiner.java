@@ -3,7 +3,7 @@ package br.com.rnaufal.jcombiner.api;
 /**
  * Created by rnaufal
  */
-public interface JCombiner<R> {
+public interface JCombiner<T, R> {
 
-    <T> R parseCombinations(T arg, Class<R> targetClass);
+    R parseCombinations(T arg, Class<R> targetClass);
 }

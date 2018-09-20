@@ -16,7 +16,7 @@ import java.util.Objects;
 /**
  * Created by rnaufal
  */
-public class JCombinerImpl<R> implements JCombiner<R> {
+public class JCombinerImpl<T, R> implements JCombiner<T, R> {
 
     private final CombinationAnnotationParser<R> combinationAnnotationParser;
 
@@ -29,7 +29,7 @@ public class JCombinerImpl<R> implements JCombiner<R> {
     }
 
     @Override
-    public <T> R parseCombinations(final T arg, final Class<R> targetClass) {
+    public R parseCombinations(final T arg, final Class<R> targetClass) {
         Objects.requireNonNull(arg, "Object source should not be null");
 
         return combinationAnnotationParser
@@ -40,8 +40,8 @@ public class JCombinerImpl<R> implements JCombiner<R> {
                 .collect(new TargetInstanceCombinationsCollector<>(targetClass));
     }
 
-    private <T> Entry<CombinationField, Combinations<?>> generateCombinations(final CombinationField combinationField,
-                                                                              final T sourceObject) {
+    private Entry<CombinationField, Combinations<?>> generateCombinations(final CombinationField combinationField,
+                                                                          final T sourceObject) {
         final Collection<?> fieldValue = combinationField
                 .getSourceFieldValue(sourceObject);
         final CombinationsGenerator<?> combinationsGenerator = new IterativeCombinationsGenerator<>(fieldValue,

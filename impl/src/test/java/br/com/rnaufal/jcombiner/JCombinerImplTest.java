@@ -53,7 +53,7 @@ class JCombinerImplTest {
             private Set<String> strings = Sets.newLinkedHashSet(List.of("a", "b", "c", "d"));
         }
 
-        final var jCombiner = new JCombinerImpl<TargetCombinationsClass>();
+        final var jCombiner = new JCombinerImpl<CombinationsClass, TargetCombinationsClass>();
         final var result = jCombiner.parseCombinations(new CombinationsClass(), TargetCombinationsClass.class);
 
         final var integerCombinations = combinationsToNestedList(result.getIntegers());
@@ -80,8 +80,9 @@ class JCombinerImplTest {
             }
         }
 
-        final var jCombiner = new JCombinerImpl<StringCombinationClass.TargetStringCombinationClass>();
-        assertThrows(InvalidCombinationClassException.class, () -> jCombiner.parseCombinations(new StringCombinationClass(), StringCombinationClass.TargetStringCombinationClass.class));
+        final var jCombiner = new JCombinerImpl<StringCombinationClass, StringCombinationClass.TargetStringCombinationClass>();
+        assertThrows(InvalidCombinationClassException.class, () -> jCombiner.parseCombinations(new StringCombinationClass(),
+                StringCombinationClass.TargetStringCombinationClass.class));
     }
 
     @Test
@@ -91,7 +92,7 @@ class JCombinerImplTest {
         when(combinationClass.getCombinationFields()).thenReturn(List.of(combinationField));
         when(annotationParser.parse(any(), eq(TargetCombinationsClass.class))).thenReturn(combinationClass);
 
-        final JCombiner<TargetCombinationsClass> jCombiner = new JCombinerImpl<>(annotationParser);
+        final JCombiner<Object, TargetCombinationsClass> jCombiner = new JCombinerImpl<>(annotationParser);
         assertThrows(InvalidCombinationFieldException.class, () -> jCombiner.parseCombinations(new Object(), TargetCombinationsClass.class));
     }
 
@@ -104,7 +105,7 @@ class JCombinerImplTest {
         when(combinationClass.getCombinationFields()).thenReturn(List.of(combinationField));
         when(annotationParser.parse(eq(NumbersCombination.class), eq(TargetCombinationsClass.class))).thenReturn(combinationClass);
 
-        final JCombiner<TargetCombinationsClass> jCombiner = new JCombinerImpl<>(annotationParser);
+        final JCombiner<NumbersCombination, TargetCombinationsClass> jCombiner = new JCombinerImpl<>(annotationParser);
         assertThrows(InvalidCombinationFieldException.class, () -> jCombiner.parseCombinations(numbersCombination, TargetCombinationsClass.class));
     }
 
