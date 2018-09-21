@@ -1,6 +1,5 @@
 package br.com.rnaufal.jcombiner.impl.combiner;
 
-import br.com.rnaufal.jcombiner.api.domain.Combination;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationImpl;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationsImpl;
@@ -8,64 +7,31 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.StreamSupport;
+import java.util.Collection;
+import java.util.Deque;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Created by rnaufal
  */
 public class IterativeCombinationsGenerator<T> implements CombinationsGenerator<T> {
 
-    private final int combinationSize;
-
-    private final Deque<Integer> indexes;
-
-    private final List<Map.Entry<Integer, List<Integer>>> successorsByIndex;
-
     private final List<T> items;
 
-    private int successorIdx;
-
-    private int nextSuccessorIndex;
+    private final int combinationSize;
 
     public IterativeCombinationsGenerator(final Collection<T> items,
                                           final int combinationSize) {
         this.items = ImmutableList.copyOf(Objects.requireNonNull(items));
         this.combinationSize = combinationSize;
-        this.indexes = Queues.newArrayDeque();
-        this.successorsByIndex = Lists.newArrayList();
-        buildSuccessors(this.items);
     }
 
     public Combinations<T> generate() {
-
-        if (combinationSize == 0) {
-            return new CombinationsImpl<>();
-        }
-
-        final var indexCombinations = new CombinationsImpl<Integer>();
-
-        for (var index = 0; index < successorsByIndex.size(); index++) {
-
-            indexes.push(successorsByIndex.get(index).getKey());
-
-            while (!indexes.isEmpty()) {
-
-                if (indexes.size() == combinationSize) {
-                    indexCombinations.add(buildIndexCombination());
-                    indexes.pop();
-                    continue;
-                }
-
-                computeSuccessors(indexCombinations, index);
-            }
-        }
-
-        return indexCombinations
+        return buildIndexCombinations()
                 .stream()
-                .map(combination -> combination.stream()
+                .map(combination -> combination
+                        .stream()
                         .map(items::get)
                         .collect(CombinationImpl<T>::new,
                                 CombinationImpl::add,
@@ -75,47 +41,34 @@ public class IterativeCombinationsGenerator<T> implements CombinationsGenerator<
                         CombinationsImpl::addAll);
     }
 
-    private void computeSuccessors(final CombinationsImpl<Integer> indexCombinations,
-                                   final int index) {
-        final var successors = successorsByIndex.get(successorIdx).getValue();
+    private List<List<Integer>> buildIndexCombinations() {
+        final Deque<Integer> indexes = Queues.newArrayDeque();
+        final List<List<Integer>> indexCombinations = Lists.newArrayList();
 
-        for (var successorIndex = nextSuccessorIndex; successorIndex < successors.size(); successorIndex++) {
-            indexes.push(successors.get(successorIndex));
+        final var size = items.size();
+        for (var index = 0; index < size; index++) {
+            indexes.push(index);
 
-            if (indexes.size() == combinationSize) {
-                successorIdx = indexes.getFirst();
-                nextSuccessorIndex = 0;
-
-                indexCombinations.add(buildIndexCombination());
-                indexes.pop();
+            var nextIndex = index + 1;
+            while (!indexes.isEmpty()) {
+                while (nextIndex < size && indexes.size() < combinationSize) {
+                    indexes.push(nextIndex++);
+                }
+                if (indexes.size() == combinationSize) {
+                    indexCombinations.add(buildIndexCombination(indexes));
+                }
+                nextIndex = indexes.pop() + 1;
             }
         }
-
-        if (indexes.getFirst() == index) {
-            successorIdx = indexes.pop() + 1;
-            nextSuccessorIndex = 0;
-        } else {
-            successorIdx = index;
-            nextSuccessorIndex = indexes.pop() - index;
-        }
+        return indexCombinations;
     }
 
-    private Combination<Integer> buildIndexCombination() {
-        return StreamSupport
-                .stream(Spliterators.spliteratorUnknownSize(indexes.descendingIterator(),
-                        Spliterator.ORDERED), false)
-                .collect(CombinationImpl<Integer>::new,
-                        CombinationImpl::add,
-                        CombinationImpl::addAll);
-    }
-
-    private void buildSuccessors(final List<T> items) {
-        for (var i = 0; i < items.size(); i++) {
-            final var successors = IntStream
-                    .range(i + 1, items.size())
-                    .boxed()
-                    .collect(Collectors.toUnmodifiableList());
-            successorsByIndex.add(Map.entry(i, successors));
+    private List<Integer> buildIndexCombination(final Deque<Integer> indexes) {
+        final List<Integer> combination = Lists.newArrayList();
+        final var iterator = indexes.descendingIterator();
+        while (iterator.hasNext()) {
+            combination.add(iterator.next());
         }
+        return combination;
     }
 }
