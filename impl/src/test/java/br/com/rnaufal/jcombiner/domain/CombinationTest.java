@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -37,8 +38,10 @@ class CombinationTest {
         combination.addAll(otherCombination);
 
         assertThat(combination.stream().count(), is(equalTo(6L)));
-        assertThat(combination.stream().collect(Collectors.toList()),
-                is(equalTo(List.of(1, 2, 3, 4, 5, 6))));
+
+        final var expected = List.of(1, 2, 3, 4, 5, 6);
+        assertThat(combination.stream().collect(Collectors.toList()),is(equalTo(expected)));
+        assertThat(combination.toString(), is(equalTo(Objects.toString(expected))));
     }
 
     private CombinationImpl<Integer> buildCombinationFrom(final List<Integer> values) {

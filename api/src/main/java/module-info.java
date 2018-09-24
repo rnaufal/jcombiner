@@ -1,7 +1,7 @@
 /**
  * Created by rnaufal
  */
-module api.main {
+module api {
 
     exports br.com.rnaufal.jcombiner.api.domain;
 

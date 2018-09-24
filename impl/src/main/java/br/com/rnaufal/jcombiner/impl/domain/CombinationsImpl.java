@@ -5,6 +5,7 @@ import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import com.google.common.collect.Lists;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,5 +27,10 @@ public class CombinationsImpl<T> implements Combinations<T> {
     @Override
     public Stream<Combination<T>> stream() {
         return values.stream();
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toString(values);
     }
 }

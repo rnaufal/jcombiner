@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 import static java.util.List.of;
@@ -38,6 +39,8 @@ class CombinationsTest {
         combinations.addAll(otherCombinations);
 
         assertThat(combinations.stream().count(), is(equalTo(5L)));
+        assertThat(combinations.toString(), is(equalTo(Objects.toString(of(of("1", "2"), of("2", "3"), of("3", "4"),
+                of("4", "5"), of("5", "6"))))));
     }
 
     private CombinationsImpl<String> buildCombinationsFrom(final List<List<String>> values) {

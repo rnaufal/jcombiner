@@ -18,7 +18,7 @@ apply plugin: 'org.junit.platform.gradle.plugin'
 group 'br.com.rnaufal'
 version '1.0.0-SNAPSHOT'
 
-ext.moduleName = 'impl.main'
+ext.moduleName = 'impl'
 ext.junitJupiterVersion = '5.2.0'
 ext.mockitoVersion = '2.21.0'
 

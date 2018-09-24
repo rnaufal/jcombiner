@@ -1,4 +1,5 @@
 rootProject.name = 'jcombiner'
 include 'api'
 include 'impl'
+include 'client'
 

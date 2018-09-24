@@ -1,7 +1,7 @@
 group 'br.com.rnaufal'
 version '1.0.0-SNAPSHOT'
 
-ext.moduleName = 'api.main'
+ext.moduleName = 'api'
 
 apply plugin: 'java-library'
 
