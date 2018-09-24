@@ -95,7 +95,7 @@ public class Main {
 }
 ```
 
-6. Below is the output for the mapped `people` field with a three size combination (`@CombinationProperty(size = 3)`):
+6. Below is the output for the mapped `people` field with a three size combination - `@CombinationProperty(size = 3)`:
 
 ```[[John, Paul, Patrick], [John, Paul, Joe], [John, Paul, Thomas], [John, Paul, Emma], [John, Patrick, Joe], [John, Patrick, Thomas], [John, Patrick, Emma], [John, Joe, Thomas], [John, Joe, Emma], [John, Thomas, Emma], [Paul, Patrick, Joe], [Paul, Patrick, Thomas], [Paul, Patrick, Emma], [Paul, Joe, Thomas], [Paul, Joe, Emma], [Paul, Thomas, Emma], [Patrick, Joe, Thomas], [Patrick, Joe, Emma], [Patrick, Thomas, Emma], [Joe, Thomas, Emma]]```
 
