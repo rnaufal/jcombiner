@@ -71,7 +71,7 @@ By default, if the `CombinationProperty` annotation has no `name` element define
 final ServiceLoader<JCombiner> jCombiners = ServiceLoader.load(JCombiner.class);
 ```
 
-5. Run the `JCombiner` service to build the combinations for each mapped field from the source object:
+5. Use the `JCombiner` service to build the combinations for each mapped field from the source object:
 
 ```java
 public class Main {
