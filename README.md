@@ -65,9 +65,7 @@ public class PeopleCombinations {
 ```
 By default, if the `CombinationProperty` annotation has no `name` element defined, the `Combinations` attribute must have the same name from the original field. Otherwise, the `Combinations` field name must match the `name` defined in the `CombinationProperty` annotation. In case none of these situations occur, an exception will be throw by the framework.
 
-4. Get a reference to the [JCombiner](https://github.com/rnaufal/jcombiner/blob/master/api/src/main/java/br/com/rnaufal/jcombiner/api/JCombiner.java) service. The `JCombiner` service is the entry point to build the combinations of a collection. 
-
-This framework uses Java 9 [modules](https://www.oracle.com/corporate/features/understanding-java-9-modules.html), so one way to get a reference to it is to use the [ServiceLoader](https://docs.oracle.com/javase/10/docs/api/java/util/ServiceLoader.html) class to load a specific service:
+4. Get a reference to the [JCombiner](https://github.com/rnaufal/jcombiner/blob/master/api/src/main/java/br/com/rnaufal/jcombiner/api/JCombiner.java) service. The `JCombiner` service is the entry point to build the combinations of a collection. This framework uses Java 9 [modules](https://www.oracle.com/corporate/features/understanding-java-9-modules.html), so one way to get a reference to it is to use the [ServiceLoader](https://docs.oracle.com/javase/10/docs/api/java/util/ServiceLoader.html) class to load a specific service:
 
 ```java
 final ServiceLoader<JCombiner> jCombiners = ServiceLoader.load(JCombiner.class);
@@ -76,20 +74,25 @@ final ServiceLoader<JCombiner> jCombiners = ServiceLoader.load(JCombiner.class);
 5. Run the `JCombiner` service to build the combinations for each mapped field from the source object:
 
 ```java
-final var people = new People();
-people.addPerson("John");
-people.addPerson("Paul");
-people.addPerson("Patrick");
-people.addPerson("Joe");
-people.addPerson("Thomas");
-people.addPerson("Emma");
+public class Main {
 
-final ServiceLoader<JCombiner> jCombiners = ServiceLoader.load(JCombiner.class);
+    public static void main(String[] args) {
+        final var people = new People();
+        people.addPerson("John");
+        people.addPerson("Paul");
+        people.addPerson("Patrick");
+        people.addPerson("Joe");
+        people.addPerson("Thomas");
+        people.addPerson("Emma");
 
-jCombiners.forEach(jCombiner -> {
-    final var peopleCombinations = (PeopleCombinations) jCombiner.parseCombinations(people, PeopleCombinations.class);
-    System.out.println(peopleCombinations);
-});
+        final ServiceLoader<JCombiner> jCombiners = ServiceLoader.load(JCombiner.class);
+
+        jCombiners.forEach(jCombiner -> {
+            final var peopleCombinations = (PeopleCombinations) jCombiner.parseCombinations(people, PeopleCombinations.class);
+            System.out.println(peopleCombinations);
+        });
+    }
+}
 ```
 
 6. The result is the following for the mapped `people` field:
