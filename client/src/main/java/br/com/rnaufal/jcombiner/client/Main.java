@@ -14,11 +14,11 @@ public class Main {
 
     public static void main(String[] args) {
         final var people = new People();
-        people.addMen(new Person("John"));
-        people.addMen(new Person("Paul"));
-        people.addMen(new Person("Patrick"));
-        people.addMen(new Person("Joe"));
-        people.addMen(new Person("Thomas"));
+        people.addMan(new Person("John"));
+        people.addMan(new Person("Paul"));
+        people.addMan(new Person("Patrick"));
+        people.addMan(new Person("Joe"));
+        people.addMan(new Person("Thomas"));
 
         people.addWoman(new Person("Anna"));
         people.addWoman(new Person("Emma"));

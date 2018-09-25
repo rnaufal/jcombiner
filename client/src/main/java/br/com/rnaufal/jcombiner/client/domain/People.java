@@ -22,7 +22,7 @@ public class People {
         this.women = new ArrayList<>();
     }
 
-    public void addMen(final Person person) {
+    public void addMan(final Person person) {
         this.men.add(Objects.requireNonNull(person));
     }
 
