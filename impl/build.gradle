@@ -22,7 +22,7 @@ ext.moduleName = 'impl'
 ext.junitJupiterVersion = '5.2.0'
 ext.mockitoVersion = '2.21.0'
 
-sourceCompatibility = 1.10
+sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()
@@ -42,7 +42,7 @@ dependencies {
 }
 
 jacoco {
-    toolVersion = '0.8.1'
+    toolVersion = '0.8.2'
     applyTo junitPlatformTest
 }
 

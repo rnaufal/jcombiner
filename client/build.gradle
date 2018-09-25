@@ -5,7 +5,7 @@ plugins {
 group 'br.com.rnaufal'
 version '1.0.0-SNAPSHOT'
 
-sourceCompatibility = 1.10
+sourceCompatibility = 1.11
 
 repositories {
     mavenCentral()

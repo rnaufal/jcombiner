@@ -40,7 +40,7 @@ class CombinationTest {
         assertThat(combination.stream().count(), is(equalTo(6L)));
 
         final var expected = List.of(1, 2, 3, 4, 5, 6);
-        assertThat(combination.stream().collect(Collectors.toList()),is(equalTo(expected)));
+        assertThat(combination.stream().collect(Collectors.toList()), is(equalTo(expected)));
         assertThat(combination.toString(), is(equalTo(Objects.toString(expected))));
     }
 
