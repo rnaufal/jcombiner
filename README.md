@@ -7,7 +7,7 @@ JCombiner is a framework to generate combinations of collections in Java
 
 ## Requirements
 
-* JDK 10
+* JDK 11
 
 ## Build
 
