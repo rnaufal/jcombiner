@@ -24,7 +24,7 @@ class TargetInstanceCombinationsCollectorTest {
     void throwExceptionWhenCombinerIsInvoked() {
         final var combiner = targetInstanceCombinationsCollector.combiner();
 
-        assertThrows(UnsupportedOperationException.class, () -> combiner.apply(new Object() , new Object()));
+        assertThrows(UnsupportedOperationException.class, () -> combiner.apply(new Object(), new Object()));
     }
 
     @Test

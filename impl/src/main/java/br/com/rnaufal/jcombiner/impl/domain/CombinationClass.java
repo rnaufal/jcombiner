@@ -1,5 +1,6 @@
 package br.com.rnaufal.jcombiner.impl.domain;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -22,8 +23,7 @@ public class CombinationClass<R> {
     }
 
     public List<CombinationField> getCombinationFields() {
-        return combinationFields;
+        return Collections.unmodifiableList(combinationFields);
     }
-
 }
 

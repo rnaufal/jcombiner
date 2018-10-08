@@ -1,5 +1,6 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
+import br.com.rnaufal.jcombiner.impl.domain.MappedField;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import org.apache.commons.lang3.StringUtils;
@@ -16,24 +17,24 @@ public class TargetFieldParameterizedTypeValidator implements FieldValidator {
     private static final String FIELD_PARAMETERIZED_TYPE_ON_TARGET_CLASS_ERROR = "Field [%s] has different parameterized type on target class!";
 
     @Override
-    public <R> FieldValidationResult validate(final Field field,
+    public <R> FieldValidationResult validate(final MappedField mappedField,
                                               final Class<R> targetClass) {
-        final var targetField = getTargetField(field, targetClass);
+        final var targetField = getTargetField(mappedField, targetClass);
 
-        return getActualTypeArgument(field)
-                .map(sourceFieldTypeArgument -> compareTypeArguments(field, targetField, sourceFieldTypeArgument))
-                .orElseGet(() -> FieldValidationResult.error(field, getClass()));
+        return getActualTypeArgument(mappedField.getField())
+                .map(sourceFieldTypeArgument -> compareTypeArguments(mappedField, targetField, sourceFieldTypeArgument))
+                .orElseGet(() -> FieldValidationResult.error(mappedField, getClass()));
     }
 
-    private FieldValidationResult compareTypeArguments(final Field field,
+    private FieldValidationResult compareTypeArguments(final MappedField mappedField,
                                                        final Field targetField,
                                                        final String sourceFieldTypeArgument) {
         final var maybeActualTypeArgument = getActualTypeArgument(targetField);
 
         return maybeActualTypeArgument
                 .filter(targetFieldTypeArgument -> StringUtils.equals(targetFieldTypeArgument, sourceFieldTypeArgument))
-                .map(targetFieldTypeArgument -> FieldValidationResult.ok(field, targetField, getClass()))
-                .orElseGet(() -> FieldValidationResult.error(field, getClass()));
+                .map(targetFieldTypeArgument -> FieldValidationResult.ok(mappedField, targetField, getClass()))
+                .orElseGet(() -> FieldValidationResult.error(mappedField, getClass()));
     }
 
     private Optional<String> getActualTypeArgument(final Field field) {

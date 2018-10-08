@@ -13,6 +13,8 @@ public class TargetCombinationsClass {
 
     private Combinations<String> stringCombinations;
 
+    private Combinations<String> names;
+
     private List<Integer> numbers;
 
     Combinations<Integer> getIntegers() {
@@ -23,7 +25,7 @@ public class TargetCombinationsClass {
         return stringCombinations;
     }
 
-    public List<Integer> getNumbers() {
-        return numbers;
+    Combinations<String> getNames() {
+        return names;
     }
 }

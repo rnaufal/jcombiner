@@ -2,6 +2,7 @@ package br.com.rnaufal.jcombiner.validator.impl;
 
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
+import br.com.rnaufal.jcombiner.impl.domain.MappedField;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,41 +29,45 @@ class TargetFieldParameterizedTypeValidatorTest {
     @Test
     void validResultWhenFieldHasSameTypeOnTargetClass() {
         final var integersField = getDeclaredField(ValidCombinationClass.class, "integers", true);
+        final var mappedField = MappedField.from(integersField);
 
-        final var actualResult = validator.validate(integersField, ValidCombinationClass.TargetCombinationClass.class);
+        final var actualResult = validator.validate(mappedField, ValidCombinationClass.TargetCombinationClass.class);
 
         assertThat(actualResult.isValid(), is(equalTo(true)));
-        assertThat(actualResult.getField().getName(), is(equalTo("integers")));
+        assertThat(actualResult.getMappedField().getField().getName(), is(equalTo("integers")));
     }
 
     @Test
     void validResultWhenFieldHasCustomNameAndSameTypeOnTargetClass() {
         final var valuesField = getDeclaredField(ValidCombinationClass.class, "values", true);
+        final var mappedField = MappedField.from(valuesField);
 
-        final var actualResult = validator.validate(valuesField, ValidCombinationClass.TargetCombinationClass.class);
+        final var actualResult = validator.validate(mappedField, ValidCombinationClass.TargetCombinationClass.class);
 
         assertThat(actualResult.isValid(), is(equalTo(true)));
-        assertThat(actualResult.getField().getName(), is(equalTo("values")));
+        assertThat(actualResult.getMappedField().getField().getName(), is(equalTo("values")));
     }
 
     @Test
     void invalidResultWhenSourceCombinationFieldHasNoTypeArgument() {
         final var stringsField = getDeclaredField(InvalidSourceStringsCombinationClass.class, "strings", true);
+        final var mappedField = MappedField.from(stringsField);
 
-        final var actualResult = validator.validate(stringsField, InvalidSourceStringsCombinationClass.TargetCombinationClass.class);
+        final var actualResult = validator.validate(mappedField, InvalidSourceStringsCombinationClass.TargetCombinationClass.class);
 
         assertThat(actualResult.isValid(), is(equalTo(false)));
-        assertThat(actualResult.getField().getName(), is(equalTo("strings")));
+        assertThat(actualResult.getMappedField().getField().getName(), is(equalTo("strings")));
     }
 
     @Test
     void invalidWhenSourceAndTargetActualTypeArgumentsAreDifferent() {
         final var numbersField = getDeclaredField(InvalidFloatCombinationClass.class, "numbers", true);
+        final var mappedField = MappedField.from(numbersField);
 
-        final var actualResult = validator.validate(numbersField, InvalidFloatCombinationClass.InvalidTypeArgumentTargetCombinationClass.class);
+        final var actualResult = validator.validate(mappedField, InvalidFloatCombinationClass.InvalidTypeArgumentTargetCombinationClass.class);
 
         assertThat(actualResult.isValid(), is(equalTo(false)));
-        assertThat(actualResult.getField().getName(), is(equalTo("numbers")));
+        assertThat(actualResult.getMappedField().getField().getName(), is(equalTo("numbers")));
     }
 
     private static class ValidCombinationClass {

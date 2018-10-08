@@ -1,5 +1,6 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
+import br.com.rnaufal.jcombiner.impl.domain.MappedField;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,34 +37,37 @@ class CollectionFieldTypeValidatorTest {
     @Test
     void shouldReturnValidationErrorWhenFieldIsNotCollectionType() {
         final var integerField = getDeclaredField(IntegerFieldClass.class, "integerField", true);
+        final var mappedField = MappedField.from(integerField);
 
-        final var fieldValidationResult = collectionFieldTypeValidator.validate(integerField, Object.class);
+        final var fieldValidationResult = collectionFieldTypeValidator.validate(mappedField, Object.class);
 
         assertThat(fieldValidationResult.isValid(), is(equalTo(false)));
-        assertThat(fieldValidationResult.getField().getName(), is(equalTo("integerField")));
+        assertThat(fieldValidationResult.getMappedField().getField().getName(), is(equalTo("integerField")));
     }
 
     @Test
     void shouldReturnValidationErrorWhenFieldHasNotParameterizedType() {
         final var valuesField = getDeclaredField(InvalidCollectionClass.class, "values", true);
+        final var mappedField = MappedField.from(valuesField);
 
-        final var fieldValidationResult = collectionFieldTypeValidator.validate(valuesField, Object.class);
+        final var fieldValidationResult = collectionFieldTypeValidator.validate(mappedField, Object.class);
 
         assertThat(fieldValidationResult.isValid(), is(equalTo(false)));
-        assertThat(fieldValidationResult.getField().getName(), is(equalTo("values")));
+        assertThat(fieldValidationResult.getMappedField().getField().getName(), is(equalTo("values")));
     }
 
     @Test
     void shouldDelegateToNextValidatorWhenFieldTypeIsCollection() {
         final var stringsField = getDeclaredField(CollectionFieldClass.class, "strings", true);
+        final var mappedField = MappedField.from(stringsField);
 
-        when(nextFieldValidator.validate(stringsField, Object.class))
-                .thenReturn(FieldValidationResult.ok(stringsField, stringsField, collectionFieldTypeValidator.getClass()));
+        when(nextFieldValidator.validate(mappedField, Object.class))
+                .thenReturn(FieldValidationResult.ok(mappedField, stringsField, collectionFieldTypeValidator.getClass()));
 
-        final var fieldValidationResult = collectionFieldTypeValidator.validate(stringsField, Object.class);
+        final var fieldValidationResult = collectionFieldTypeValidator.validate(mappedField, Object.class);
 
         assertThat(fieldValidationResult.isValid(), is(equalTo(true)));
-        assertThat(fieldValidationResult.getField().getName(), is(equalTo("strings")));
+        assertThat(fieldValidationResult.getMappedField().getField().getName(), is(equalTo("strings")));
     }
 
     private static class IntegerFieldClass {

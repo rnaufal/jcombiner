@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
  * Created by rnaufal
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
 public @interface CombinationProperty {
 
     int size();

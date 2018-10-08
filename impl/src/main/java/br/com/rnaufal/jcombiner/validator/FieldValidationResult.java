@@ -1,5 +1,7 @@
 package br.com.rnaufal.jcombiner.validator;
 
+import br.com.rnaufal.jcombiner.impl.domain.MappedField;
+
 import java.lang.reflect.Field;
 import java.util.Optional;
 
@@ -8,7 +10,7 @@ import java.util.Optional;
  */
 public class FieldValidationResult {
 
-    private final Field field;
+    private final MappedField mappedField;
 
     private final Class<? extends FieldValidator> validatorResultClass;
 
@@ -16,29 +18,29 @@ public class FieldValidationResult {
 
     private Field targetField;
 
-    private FieldValidationResult(final Field field,
+    private FieldValidationResult(final MappedField mappedField,
                                   final Class<? extends FieldValidator> validatorResultClass,
                                   final boolean valid) {
-        this.field = field;
+        this.mappedField = mappedField;
         this.validatorResultClass = validatorResultClass;
         this.valid = valid;
     }
 
-    public static FieldValidationResult ok(final Field field,
+    public static FieldValidationResult ok(final MappedField mappedField,
                                            final Field targetField,
                                            final Class<? extends FieldValidator> validatorResultClass) {
-        final var fieldValidationResult = new FieldValidationResult(field, validatorResultClass, true);
+        final var fieldValidationResult = new FieldValidationResult(mappedField, validatorResultClass, true);
         fieldValidationResult.setTargetField(targetField);
         return fieldValidationResult;
     }
 
-    public static FieldValidationResult error(final Field field,
+    public static FieldValidationResult error(final MappedField field,
                                               final Class<? extends FieldValidator> validatorResultClass) {
         return new FieldValidationResult(field, validatorResultClass, false);
     }
 
-    public Field getField() {
-        return field;
+    public MappedField getMappedField() {
+        return mappedField;
     }
 
     public boolean isValid() {
@@ -55,5 +57,9 @@ public class FieldValidationResult {
 
     public Class<? extends FieldValidator> getValidatorResultClass() {
         return validatorResultClass;
+    }
+
+    public String formatErrorMessage(final String errorMessage) {
+        return String.format(errorMessage, mappedField.getField().getName());
     }
 }

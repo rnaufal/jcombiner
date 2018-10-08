@@ -2,6 +2,7 @@ package br.com.rnaufal.jcombiner.validator.impl;
 
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
+import br.com.rnaufal.jcombiner.impl.domain.MappedField;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,34 +39,37 @@ class FieldExistsOnTargetClassValidatorTest {
     void validResultWhenFieldExistsOnTargetClass() {
         final var stringsField = getDeclaredField(ValidCombinationClass.class, "strings", true);
         final var targetStringsField = getDeclaredField(ValidCombinationClass.TargetCombinationClass.class, "strings", true);
+        final var mappedField = MappedField.from(stringsField);
 
-        when(nextValidator.validate(stringsField, ValidCombinationClass.TargetCombinationClass.class))
-                .thenReturn(FieldValidationResult.ok(stringsField, targetStringsField, validator.getClass()));
+        when(nextValidator.validate(mappedField, ValidCombinationClass.TargetCombinationClass.class))
+                .thenReturn(FieldValidationResult.ok(mappedField, targetStringsField, validator.getClass()));
 
-        final var actualValidationResult = validator.validate(stringsField, ValidCombinationClass.TargetCombinationClass.class);
+        final var actualValidationResult = validator.validate(mappedField, ValidCombinationClass.TargetCombinationClass.class);
 
         assertThat(actualValidationResult.isValid(), is(equalTo(true)));
-        assertThat(actualValidationResult.getField().getName(), is(equalTo("strings")));
+        assertThat(actualValidationResult.getMappedField().getField().getName(), is(equalTo("strings")));
     }
 
     @Test
     void invalidResultWhenFieldNotExistsOnTargetClass() {
         final var integersField = getDeclaredField(IntegersCombinationClass.class, "integers", true);
+        final var mappedField = MappedField.from(integersField);
 
-        final var actualValidationResult = validator.validate(integersField, IntegersCombinationClass.InvalidTargetCombinationClass.class);
+        final var actualValidationResult = validator.validate(mappedField, IntegersCombinationClass.InvalidTargetCombinationClass.class);
 
         assertThat(actualValidationResult.isValid(), is(equalTo(false)));
-        assertThat(actualValidationResult.getField().getName(), is(equalTo("integers")));
+        assertThat(actualValidationResult.getMappedField().getField().getName(), is(equalTo("integers")));
     }
 
     @Test
     void invalidResultWhenFieldCustomNameNotExistsOnTargetClass() {
         final var integersField = getDeclaredField(IntegersCombinationClass.class, "otherIntegers", true);
+        final var mappedField = MappedField.from(integersField);
 
-        final var actualValidationResult = validator.validate(integersField, IntegersCombinationClass.InvalidTargetCombinationClass.class);
+        final var actualValidationResult = validator.validate(mappedField, IntegersCombinationClass.InvalidTargetCombinationClass.class);
 
         assertThat(actualValidationResult.isValid(), is(equalTo(false)));
-        assertThat(actualValidationResult.getField().getName(), is(equalTo("otherIntegers")));
+        assertThat(actualValidationResult.getMappedField().getField().getName(), is(equalTo("otherIntegers")));
     }
 
     private static class ValidCombinationClass {

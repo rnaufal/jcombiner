@@ -1,11 +1,11 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
+import br.com.rnaufal.jcombiner.impl.domain.MappedField;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.messages.ValidationMessages;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
 
 /**
@@ -22,13 +22,13 @@ public class CombinationsTargetFieldTypeValidator implements FieldValidator {
     }
 
     @Override
-    public <R> FieldValidationResult validate(final Field field,
+    public <R> FieldValidationResult validate(final MappedField mappedField,
                                               final Class<R> targetClass) {
-        final var targetField = getTargetField(field, targetClass);
+        final var targetField = getTargetField(mappedField, targetClass);
 
         return targetField.getType() == Combinations.class ?
-                nextValidator.validate(field, targetClass) :
-                FieldValidationResult.error(field, getClass());
+                nextValidator.validate(mappedField, targetClass) :
+                FieldValidationResult.error(mappedField, getClass());
     }
 
     @Override

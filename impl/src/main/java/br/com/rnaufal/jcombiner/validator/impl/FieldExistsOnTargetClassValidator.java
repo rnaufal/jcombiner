@@ -1,10 +1,10 @@
 package br.com.rnaufal.jcombiner.validator.impl;
 
+import br.com.rnaufal.jcombiner.impl.domain.MappedField;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.messages.ValidationMessages;
 
-import java.lang.reflect.Field;
 import java.util.Objects;
 
 /**
@@ -21,11 +21,11 @@ public class FieldExistsOnTargetClassValidator implements FieldValidator {
     }
 
     @Override
-    public <R> FieldValidationResult validate(final Field field,
+    public <R> FieldValidationResult validate(final MappedField mappedField,
                                               final Class<R> targetClass) {
-        return existsFieldOnTargetClass(field, targetClass) ?
-                nextValidator.validate(field, targetClass) :
-                FieldValidationResult.error(field, getClass());
+        return existsFieldOnTargetClass(mappedField, targetClass) ?
+                nextValidator.validate(mappedField, targetClass) :
+                FieldValidationResult.error(mappedField, getClass());
     }
 
     @Override
@@ -40,8 +40,8 @@ public class FieldExistsOnTargetClassValidator implements FieldValidator {
         return FIELD_NOT_EXISTS_ON_TARGET_CLASS_ERROR;
     }
 
-    private <R> boolean existsFieldOnTargetClass(final Field field,
+    private <R> boolean existsFieldOnTargetClass(final MappedField mappedField,
                                                  final Class<R> targetClass) {
-        return getTargetField(field, targetClass) != null;
+        return getTargetField(mappedField, targetClass) != null;
     }
 }

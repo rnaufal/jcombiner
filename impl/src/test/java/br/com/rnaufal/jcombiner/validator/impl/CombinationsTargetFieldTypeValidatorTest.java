@@ -2,6 +2,7 @@ package br.com.rnaufal.jcombiner.validator.impl;
 
 import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
+import br.com.rnaufal.jcombiner.impl.domain.MappedField;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import org.junit.jupiter.api.BeforeEach;
@@ -40,38 +41,41 @@ class CombinationsTargetFieldTypeValidatorTest {
     void shouldDelegateToNextValidatorWhenTargetFieldTypeIsCombinations() {
         final var integersField = getDeclaredField(ValidIntegersCombinationClass.class, "integers", true);
         final var targetIntegersField = getDeclaredField(ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class, "integers", true);
+        final var mappedField = MappedField.from(integersField);
 
-        when(nextValidator.validate(integersField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class))
-                .thenReturn(FieldValidationResult.ok(integersField, targetIntegersField, nextValidator.getClass()));
+        when(nextValidator.validate(mappedField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class))
+                .thenReturn(FieldValidationResult.ok(mappedField, targetIntegersField, nextValidator.getClass()));
 
-        final var fieldValidationResult = validator.validate(integersField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class);
+        final var fieldValidationResult = validator.validate(mappedField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class);
 
         assertThat(fieldValidationResult.isValid(), is(equalTo(true)));
-        assertThat(fieldValidationResult.getField().getName(), is(equalTo("integers")));
+        assertThat(fieldValidationResult.getMappedField().getField().getName(), is(equalTo("integers")));
     }
 
     @Test
     void validResultWhenFieldHasCustomNameAndSameTypeOnTargetClass() {
         final var valuesField = getDeclaredField(ValidIntegersCombinationClass.class, "values", true);
         final var integerValuesTargetField = getDeclaredField(ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class, "integerValues", true);
+        final var mappedField = MappedField.from(valuesField);
 
-        when(nextValidator.validate(valuesField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class))
-                .thenReturn(FieldValidationResult.ok(valuesField, integerValuesTargetField, nextValidator.getClass()));
+        when(nextValidator.validate(mappedField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class))
+                .thenReturn(FieldValidationResult.ok(mappedField, integerValuesTargetField, nextValidator.getClass()));
 
-        final var actualResult = validator.validate(valuesField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class);
+        final var actualResult = validator.validate(mappedField, ValidIntegersCombinationClass.ValidTargetIntegersCombinationClass.class);
 
         assertThat(actualResult.isValid(), is(equalTo(true)));
-        assertThat(actualResult.getField().getName(), is(equalTo("values")));
+        assertThat(actualResult.getMappedField().getField().getName(), is(equalTo("values")));
     }
 
     @Test
     void invalidResultWhenTargetFieldHasDifferentType() {
         final var stringsField = getDeclaredField(InvalidStringsCombinationClass.class, "strings", true);
+        final var mappedField = MappedField.from(stringsField);
 
-        final var actualResult = validator.validate(stringsField, InvalidStringsCombinationClass.InvalidTargetStringsCombinationClass.class);
+        final var actualResult = validator.validate(mappedField, InvalidStringsCombinationClass.InvalidTargetStringsCombinationClass.class);
 
         assertThat(actualResult.isValid(), is(equalTo(false)));
-        assertThat(actualResult.getField().getName(), is(equalTo("strings")));
+        assertThat(actualResult.getMappedField().getField().getName(), is(equalTo("strings")));
     }
 
     private static class ValidIntegersCombinationClass {

@@ -1,7 +1,7 @@
 package br.com.rnaufal.jcombiner.validator.messages;
 
-import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
+import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import com.google.common.collect.Maps;
 
 import java.util.Map;
@@ -24,6 +24,6 @@ public class ValidationMessages {
 
     public Optional<String> getErrorMessage(final FieldValidationResult validationResult) {
         return Optional.ofNullable(messagesByFieldValidatorClass.get(validationResult.getValidatorResultClass()))
-                       .map(errorMessage -> String.format(errorMessage, validationResult.getField().getName()));
+                       .map(validationResult::formatErrorMessage);
     }
 }

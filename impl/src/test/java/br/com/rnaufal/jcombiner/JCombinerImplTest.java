@@ -15,6 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Set;
@@ -58,13 +62,38 @@ class JCombinerImplTest {
 
         final var integerCombinations = combinationsToNestedList(result.getIntegers());
         assertThat(integerCombinations, hasSize(6));
-        assertThat(integerCombinations, is(equalTo(List.of(List.of(0, 1), List.of(0, 2), List.of(0, 3),
-                List.of(1, 2), List.of(1, 3), List.of(2, 3)))));
+        assertThat(integerCombinations, is(equalTo(List.of(List.of(0, 1), List.of(0, 2), List.of(0, 3), List.of(1, 2),
+                List.of(1, 3), List.of(2, 3)))));
 
         final var stringCombinations = combinationsToNestedList(result.getStringCombinations());
         assertThat(stringCombinations, hasSize(4));
         assertThat(stringCombinations, is(equalTo(List.of(List.of("a", "b", "c"), List.of("a", "b", "d"),
                 List.of("a", "c", "d"), List.of("b", "c", "d")))));
+    }
+
+    @Test
+    void shouldGenerateCombinationsUsingCustomAnnotations() {
+        class OtherCombinationClass {
+
+            @TwoSizeCombinationProperty
+            private List<Integer> integers = List.of(0, 1, 2, 3, 4);
+
+            @TwoSizeCombinationProperty
+            private List<String> names = List.of("Paul", "Mary", "John", "Joe");
+        }
+
+        final var jCombiner = new JCombinerImpl<OtherCombinationClass, TargetCombinationsClass>();
+        final var result = jCombiner.parseCombinations(new OtherCombinationClass(), TargetCombinationsClass.class);
+
+        final var integerCombinations = combinationsToNestedList(result.getIntegers());
+        assertThat(integerCombinations, hasSize(10));
+        assertThat(integerCombinations, is(equalTo(List.of(List.of(0, 1), List.of(0, 2), List.of(0, 3), List.of(0, 4),
+                List.of(1, 2), List.of(1, 3), List.of(1, 4), List.of(2, 3), List.of(2, 4), List.of(3, 4)))));
+
+        final var stringCombinations = combinationsToNestedList(result.getNames());
+        assertThat(stringCombinations, hasSize(6));
+        assertThat(stringCombinations, is(equalTo(List.of(List.of("Paul", "Mary"), List.of("Paul", "John"),
+                List.of("Paul", "Joe"), List.of("Mary", "John"), List.of("Mary", "Joe"), List.of("John", "Joe")))));
     }
 
     @Test
@@ -129,5 +158,12 @@ class JCombinerImplTest {
 
         @CombinationProperty(size = 2)
         private List<Integer> numbers = List.of(1, 2, 3, 4, 5);
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    @CombinationProperty(size = 2)
+    private @interface TwoSizeCombinationProperty {
+
     }
 }

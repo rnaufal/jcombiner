@@ -1,9 +1,9 @@
 package br.com.rnaufal.jcombiner.parser;
 
-import br.com.rnaufal.jcombiner.api.annotation.CombinationProperty;
 import br.com.rnaufal.jcombiner.exception.InvalidCombinationFieldException;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationClass;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationField;
+import br.com.rnaufal.jcombiner.impl.domain.MappedField;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
 import br.com.rnaufal.jcombiner.validator.impl.CollectionFieldTypeValidator;
@@ -50,8 +50,8 @@ public class CombinationAnnotationParserImpl<R> implements CombinationAnnotation
         final var validatedFieldsByName = validateFields(sourceClass, targetClass);
 
         if (!hasCombinationProperties(validatedFieldsByName)) {
-            throw new InvalidCombinationFieldException("Target result class [" + targetClass.getSimpleName()
-                    + "] has no Combination properties");
+            throw new InvalidCombinationFieldException(String.format("Target result class [%s] has no Combination properties",
+                    targetClass.getSimpleName()));
         }
 
         getErrorMessage(validatedFieldsByName)
@@ -71,13 +71,11 @@ public class CombinationAnnotationParserImpl<R> implements CombinationAnnotation
     }
 
     private Optional<CombinationField> buildCombinationField(final FieldValidationResult fieldValidationResult) {
-        final var combinationAnnotation = fieldValidationResult.getField().getAnnotation(CombinationProperty.class);
-
         return fieldValidationResult
                 .getTargetField()
-                .map(targetField -> new CombinationField(fieldValidationResult.getField(),
+                .map(targetField -> new CombinationField(fieldValidationResult.getMappedField().getField(),
                         targetField,
-                        combinationAnnotation.size()));
+                        fieldValidationResult.getMappedField().getCombinationSize()));
     }
 
     private boolean hasCombinationProperties(final Map<Boolean, List<FieldValidationResult>> validatedFields) {
@@ -105,7 +103,8 @@ public class CombinationAnnotationParserImpl<R> implements CombinationAnnotation
                                                                      final Class<R> targetClass) {
         return Arrays
                 .stream(clazz.getDeclaredFields())
-                .filter(field -> field.isAnnotationPresent(CombinationProperty.class))
+                .map(MappedField::from)
+                .filter(MappedField::matchesCombinationProperty)
                 .map(field -> validator.validate(field, targetClass))
                 .collect(Collectors.partitioningBy(FieldValidationResult::isValid, Collectors.toUnmodifiableList()));
     }
