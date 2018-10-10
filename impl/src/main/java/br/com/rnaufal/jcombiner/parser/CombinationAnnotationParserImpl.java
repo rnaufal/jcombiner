@@ -6,10 +6,7 @@ import br.com.rnaufal.jcombiner.impl.domain.CombinationField;
 import br.com.rnaufal.jcombiner.impl.domain.MappedField;
 import br.com.rnaufal.jcombiner.validator.FieldValidationResult;
 import br.com.rnaufal.jcombiner.validator.FieldValidator;
-import br.com.rnaufal.jcombiner.validator.impl.CollectionFieldTypeValidator;
-import br.com.rnaufal.jcombiner.validator.impl.CombinationsTargetFieldTypeValidator;
-import br.com.rnaufal.jcombiner.validator.impl.FieldExistsOnTargetClassValidator;
-import br.com.rnaufal.jcombiner.validator.impl.TargetFieldParameterizedTypeValidator;
+import br.com.rnaufal.jcombiner.validator.impl.*;
 import br.com.rnaufal.jcombiner.validator.messages.ValidationMessages;
 import com.google.common.collect.Maps;
 import org.apache.commons.collections4.CollectionUtils;
@@ -31,8 +28,9 @@ public class CombinationAnnotationParserImpl<R> implements CombinationAnnotation
 
     public CombinationAnnotationParserImpl() {
         descriptorsByClass = Maps.newConcurrentMap();
-        validator = new CollectionFieldTypeValidator(new FieldExistsOnTargetClassValidator(
-                new CombinationsTargetFieldTypeValidator(new TargetFieldParameterizedTypeValidator())));
+        validator = new RepeatedTargetFieldNameValidator(new CollectionFieldTypeValidator(
+                new FieldExistsOnTargetClassValidator(new CombinationsTargetFieldTypeValidator(
+                        new TargetFieldParameterizedTypeValidator()))));
         validationMessages = new ValidationMessages();
         validator.registerTo(validationMessages);
     }
@@ -96,7 +94,7 @@ public class CombinationAnnotationParserImpl<R> implements CombinationAnnotation
                 .flatMap(Optional::stream)
                 .reduce(StringUtils.EMPTY, (errorMsg, otherErrorMsg) -> errorMsg + "\n" + otherErrorMsg);
 
-        return StringUtils.equals(errorMessage, StringUtils.EMPTY) ? Optional.empty() : Optional.of(errorMessage);
+        return errorMessage.isBlank() ? Optional.empty() : Optional.of(errorMessage);
     }
 
     private Map<Boolean, List<FieldValidationResult>> validateFields(final Class<?> clazz,

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 class IterativeCombinationsGeneratorTest {
 
     @ParameterizedTest(name = "combinationSize: {0}, inputValues: {1}")
-    @MethodSource("stringListArguments")
+    @MethodSource("combinationArguments")
     @DisplayName("Should generate string list combinations")
     void testStringListCombinations(final int inputSize,
                                     final List<String> inputValues,
@@ -55,7 +55,7 @@ class IterativeCombinationsGeneratorTest {
         }
     }
 
-    private static Stream<Arguments> stringListArguments() {
+    private static Stream<Arguments> combinationArguments() {
         return Stream.of(zeroSizeCombinations(), oneSizeCombinations(), twoSizeCombinations(), threeSizeCombinations());
     }
 

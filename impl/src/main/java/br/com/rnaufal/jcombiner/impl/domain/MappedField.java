@@ -20,16 +20,16 @@ public class MappedField {
 
     private final CombinationProperty combinationPropertyOnAnnotation;
 
-    public static MappedField from(final Field field) {
-        return new MappedField(field, getCombinationPropertyOnField(field), getCombinationPropertyOnAnnotation(field));
-    }
-
     private MappedField(final Field field,
                         final CombinationProperty combinationPropertyOnField,
                         final CombinationProperty combinationPropertyOnAnnotation) {
         this.field = field;
         this.combinationPropertyOnField = combinationPropertyOnField;
         this.combinationPropertyOnAnnotation = combinationPropertyOnAnnotation;
+    }
+
+    public static MappedField from(final Field field) {
+        return new MappedField(field, getCombinationPropertyOnField(field), getCombinationPropertyOnAnnotation(field));
     }
 
     public Field getField() {

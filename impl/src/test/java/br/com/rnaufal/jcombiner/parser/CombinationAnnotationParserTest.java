@@ -84,7 +84,6 @@ class CombinationAnnotationParserTest {
         assertCombinationField(combinationClass.getCombinationFields().get(2), "values", "values", 3);
     }
 
-
     @Test
     void shouldThrowExceptionWhenTargetFieldTypesAreInvalid() {
 
@@ -204,6 +203,35 @@ class CombinationAnnotationParserTest {
 
         assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(InvalidCombinationsClass.class,
                 InvalidCombinationsClass.CombinationsTargetClass.class));
+    }
+
+    @Test
+    void shouldThrowExceptionWhenTargetFieldNamesAreRepeated() {
+        class InvalidTargetFieldCombinationClass {
+
+            @CombinationProperty(size = 3, name = "values")
+            private List<Double> values;
+
+            @CombinationProperty(size = 4, name = "values")
+            private List<Double> otherValues;
+
+            @StringsTwoSizeCombinationProperty
+            private List<String> strings;
+
+            @StringsTwoSizeCombinationProperty
+            private List<String> otherStrings;
+
+            class CombinationsTargetClass {
+                private Combinations<Double> values;
+
+                private Combinations<String> strings;
+            }
+        }
+
+        final var annotationParser = new CombinationAnnotationParserImpl<InvalidTargetFieldCombinationClass.CombinationsTargetClass>();
+
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(InvalidTargetFieldCombinationClass.class,
+                InvalidTargetFieldCombinationClass.CombinationsTargetClass.class));
     }
 
     private void assertCombinationField(final CombinationField combinationField, final String sourceFieldName,

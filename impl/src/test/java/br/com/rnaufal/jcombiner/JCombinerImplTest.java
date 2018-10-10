@@ -97,7 +97,35 @@ class JCombinerImplTest {
     }
 
     @Test
-    void throwExceptionWhenAnErrorWhileCreatingTargetClassInstance() {
+    void shouldThrowExceptionWhenTargetFieldNamesAreRepeatedAcrossSourceFields() {
+        class CombinationClass {
+
+            @CombinationProperty(size = 3, name = "floatNumbers")
+            private List<Float> values;
+
+            @CombinationProperty(size = 4, name = "floatNumbers")
+            private List<Float> otherValues;
+
+            @OneSizeCombinationProperty
+            private List<Integer> integers;
+
+            @OneSizeCombinationProperty
+            private List<Integer> otherIntegers;
+
+            class CombinationsTargetClass {
+                private Combinations<Float> floatNumbers;
+
+                private Combinations<Integer> integers;
+            }
+        }
+
+        final var jCombiner = new JCombinerImpl<CombinationClass, CombinationClass.CombinationsTargetClass>();
+        assertThrows(InvalidCombinationFieldException.class, () -> jCombiner.parseCombinations(new CombinationClass(),
+                CombinationClass.CombinationsTargetClass.class));
+    }
+
+    @Test
+    void throwExceptionWhileCreatingNestedTargetClassInstance() {
         class StringCombinationClass {
 
             @CombinationProperty(size = 4)
@@ -115,7 +143,7 @@ class JCombinerImplTest {
     }
 
     @Test
-    void throwExceptionWhileTryingToGetFieldValueFromSourceObject() {
+    void throwExceptionWhileTryingToGetFieldValueFromInvalidSourceObject() {
         final var combinationField = new CombinationField(getNumbersSourceField(), getNumbersTargetField(), 5);
 
         when(combinationClass.getCombinationFields()).thenReturn(List.of(combinationField));
@@ -126,7 +154,7 @@ class JCombinerImplTest {
     }
 
     @Test
-    void shouldThrowExceptionWhenTryingToWriteValueOnTargetField() {
+    void shouldThrowExceptionWhenTryingToWriteValueOnTargetFieldWithInvalidType() {
         final var numbersCombination = new NumbersCombination();
 
         final var combinationField = new CombinationField(getNumbersSourceField(), getNumbersTargetField(), 5);
@@ -164,6 +192,13 @@ class JCombinerImplTest {
     @Target(ElementType.FIELD)
     @CombinationProperty(size = 2)
     private @interface TwoSizeCombinationProperty {
+
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    @CombinationProperty(size = 1, name = "integers")
+    private @interface OneSizeCombinationProperty {
 
     }
 }
