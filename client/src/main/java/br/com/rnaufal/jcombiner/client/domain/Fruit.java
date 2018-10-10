@@ -3,16 +3,16 @@ package br.com.rnaufal.jcombiner.client.domain;
 /**
  * Created by rnaufal
  */
-public class Person {
+public class Fruit {
 
     private final String name;
 
-    public Person(final String name) {
+    public Fruit(final String name) {
         this.name = name;
     }
 
     @Override
     public String toString() {
-        return "Person {name=" + name + "}";
+        return "Fruit {name=" + name + "}";
     }
 }

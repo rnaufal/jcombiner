@@ -10,7 +10,7 @@ import java.util.ServiceLoader;
 /**
  * Created by rnaufal
  */
-public class Main {
+public class PeopleApplication {
 
     public static void main(String[] args) {
         final var people = new People();

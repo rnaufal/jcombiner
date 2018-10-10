@@ -7,17 +7,20 @@ import java.util.StringJoiner;
 /**
  * Created by rnaufal
  */
-public class PeopleCombinations {
+public class FruitCombinations {
 
-    private Combinations<Person> men;
+    private Combinations<Fruit> red;
 
-    private Combinations<Person> someWomen;
+    private Combinations<Fruit> yellow;
+
+    private Combinations<Fruit> green;
 
     @Override
     public String toString() {
         return new StringJoiner(", ")
-                .add("men=" + men)
-                .add("someWomen=" + someWomen)
+                .add("red=" + red)
+                .add("yellow=" + yellow)
+                .add("green=" + green)
                 .toString();
     }
 }
