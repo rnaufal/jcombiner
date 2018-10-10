@@ -152,6 +152,30 @@ class CombinationAnnotationParserTest {
     }
 
     @Test
+    void shouldThrowExceptionWhenCustomCombinationPropertyAnnotationIsInvalid() {
+
+        class InvalidCombinationsClass {
+
+            @OneSizeCombinationProperty
+            private List<Float> numbers;
+
+            @OneSizeCombinationProperty
+            private Collection<String> values;
+
+            class CombinationsTargetClass {
+                private Combinations<Float> numbers;
+
+                private Combinations<String> values;
+            }
+        }
+
+        final var annotationParser = new CombinationAnnotationParserImpl<InvalidCombinationsClass.CombinationsTargetClass>();
+
+        assertThrows(InvalidCombinationFieldException.class, () -> annotationParser.parse(InvalidCombinationsClass.class,
+                InvalidCombinationsClass.CombinationsTargetClass.class));
+    }
+
+    @Test
     void shouldThrowExceptionWhenTargetClassHasNoFieldsMapped() {
 
         class CombinationsClass {
@@ -262,6 +286,12 @@ class CombinationAnnotationParserTest {
     @Target(ElementType.FIELD)
     @CombinationProperty(size = 2, name = "strings")
     private @interface StringsTwoSizeCombinationProperty {
+
+    }
+
+    @Retention(RetentionPolicy.RUNTIME)
+    @Target(ElementType.FIELD)
+    private @interface OneSizeCombinationProperty {
 
     }
 }
