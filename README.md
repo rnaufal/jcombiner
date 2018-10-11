@@ -14,7 +14,10 @@ JCombiner is a framework to generate combinations of collections in Java
 ```Shell
 ./gradlew clean build
 ```
+
 ## Usage
+
+### Using @CombinationProperty annotation
 
 1. Create some class which holds collection of elements, let's say the following `People` class:
 
@@ -95,8 +98,49 @@ public class Main {
 }
 ```
 
-6. Below is the output for the mapped `people` field with a three size combination (`@CombinationProperty(size = 3)`):
+6. Running the above code, here is the output for the mapped `people` field with a three size combination (`@CombinationProperty(size = 3)`):
 
 ```[[John, Paul, Patrick], [John, Paul, Joe], [John, Paul, Thomas], [John, Paul, Emma], [John, Patrick, Joe], [John, Patrick, Thomas], [John, Patrick, Emma], [John, Joe, Thomas], [John, Joe, Emma], [John, Thomas, Emma], [Paul, Patrick, Joe], [Paul, Patrick, Thomas], [Paul, Patrick, Emma], [Paul, Joe, Thomas], [Paul, Joe, Emma], [Paul, Thomas, Emma], [Patrick, Joe, Thomas], [Patrick, Joe, Emma], [Patrick, Thomas, Emma], [Joe, Thomas, Emma]]```
 
-7. A more concrete example can be found on the [client](https://github.com/rnaufal/jcombiner/tree/master/client) module
+### Using custom meta-annotations
+
+It is possible to create custom meta-annotations annotated with the `@CombinationProperty` annotation and then reuse those
+annotations through collection fields.
+
+Let's suppose the following meta-annotation:
+
+```java
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.FIELD)
+@CombinationProperty(size = 3)
+public @interface ThreeSizeCombination {
+}
+```
+
+Using the example from the previous section, it is possible to change the `People` class to use the custom
+`ThreeSizeCombination` annotation:
+
+```java
+public class People {
+
+    @ThreeSizeCombination
+    private List<String> people;
+
+    public People() {
+        this.people = new ArrayList<>();
+    }
+
+    public void addPerson(final String name) {
+        this.people.add(Objects.requireNonNull(name));
+    }
+}
+```
+
+Using the `JCombiner` service to build the combinations for the `People` class (as explained [here](#using-combinationproperty-annotation)), 
+the output should be the same:
+
+```[[John, Paul, Patrick], [John, Paul, Joe], [John, Paul, Thomas], [John, Paul, Emma], [John, Patrick, Joe], [John, Patrick, Thomas], [John, Patrick, Emma], [John, Joe, Thomas], [John, Joe, Emma], [John, Thomas, Emma], [Paul, Patrick, Joe], [Paul, Patrick, Thomas], [Paul, Patrick, Emma], [Paul, Joe, Thomas], [Paul, Joe, Emma], [Paul, Thomas, Emma], [Patrick, Joe, Thomas], [Patrick, Joe, Emma], [Patrick, Thomas, Emma], [Joe, Thomas, Emma]]```
+
+## Examples
+
+More examples can be found on the [client](https://github.com/rnaufal/jcombiner/tree/master/client) module.
