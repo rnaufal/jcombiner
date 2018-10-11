@@ -102,7 +102,7 @@ public class Main {
 
 ```[[John, Paul, Patrick], [John, Paul, Joe], [John, Paul, Thomas], [John, Paul, Emma], [John, Patrick, Joe], [John, Patrick, Thomas], [John, Patrick, Emma], [John, Joe, Thomas], [John, Joe, Emma], [John, Thomas, Emma], [Paul, Patrick, Joe], [Paul, Patrick, Thomas], [Paul, Patrick, Emma], [Paul, Joe, Thomas], [Paul, Joe, Emma], [Paul, Thomas, Emma], [Patrick, Joe, Thomas], [Patrick, Joe, Emma], [Patrick, Thomas, Emma], [Joe, Thomas, Emma]]```
 
-### Using custom annotation
+### Using custom annotations
 
 It is possible to create custom annotations annotated with the `@CombinationProperty` annotation and then reuse those
 annotations through collection fields.
