@@ -21,7 +21,7 @@ public class PeopleCombinationService {
                 .orElseThrow(() -> new RuntimeException("No JCombiner service found"));
     }
 
-    public PeopleCombinations from(final People people) {
+    public PeopleCombinations buildCombinations(final People people) {
         return jcombiner.parseCombinations(people, PeopleCombinations.class);
     }
 }

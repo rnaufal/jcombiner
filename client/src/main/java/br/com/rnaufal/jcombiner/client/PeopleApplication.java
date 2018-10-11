@@ -27,6 +27,6 @@ public class PeopleApplication {
 
         final var peopleCombinationService = new PeopleCombinationService(ServiceLoader.load(JCombiner.class));
 
-        System.out.println(peopleCombinationService.from(people));
+        System.out.println(peopleCombinationService.buildCombinations(people));
     }
 }

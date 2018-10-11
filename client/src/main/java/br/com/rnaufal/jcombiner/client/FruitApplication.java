@@ -28,6 +28,6 @@ public class FruitApplication {
 
         final var fruitsCombinationService = new FruitCombinationService(ServiceLoader.load(JCombiner.class));
 
-        System.out.println(fruitsCombinationService.from(fruits));
+        System.out.println(fruitsCombinationService.buildCombinations(fruits));
     }
 }
