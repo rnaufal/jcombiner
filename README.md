@@ -3,11 +3,12 @@
 [![Build Status](https://travis-ci.org/rnaufal/jcombiner.svg?branch=master)](https://travis-ci.org/rnaufal/jcombiner)
 [![Coverage Status](https://coveralls.io/repos/github/rnaufal/jcombiner/badge.svg?branch=master)](https://coveralls.io/github/rnaufal/jcombiner?branch=master)
 
-JCombiner is a framework to generate combinations of collections in Java
-
-## Requirements
+JCombiner is a framework to generate combinations of collections in Java. It uses:
 
 * JDK 11
+* Gradle
+* JUnit 5
+* Mockito
 
 ## Build
 
