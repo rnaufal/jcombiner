@@ -3,7 +3,6 @@ package br.com.rnaufal.jcombiner.impl.combiner;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationImpl;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationsImpl;
-import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 
@@ -23,7 +22,7 @@ public class IterativeCombinationsGenerator<T> implements CombinationsGenerator<
 
     public IterativeCombinationsGenerator(final Collection<T> items,
                                           final int combinationSize) {
-        this.items = ImmutableList.copyOf(Objects.requireNonNull(items));
+        this.items = List.copyOf(Objects.requireNonNull(items));
         this.combinationSize = combinationSize;
     }
 
