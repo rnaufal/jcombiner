@@ -39,7 +39,7 @@ public class TargetInstanceCombinationsCollector<R> implements Collector<Map.Ent
     public BiConsumer<R, Map.Entry<CombinationField, Combinations<?>>> accumulator() {
         return (instance, entry) -> {
             final var combinationField = entry.getKey();
-            final Combinations<?> combinations = entry.getValue();
+            final var combinations = entry.getValue();
             combinationField.writeTargetFieldValue(instance, combinations);
         };
     }
