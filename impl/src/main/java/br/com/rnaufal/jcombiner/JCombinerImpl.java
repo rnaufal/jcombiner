@@ -42,11 +42,10 @@ public class JCombinerImpl<T, R> implements JCombiner<T, R> {
 
     private Entry<CombinationField, Combinations<?>> generateCombinations(final CombinationField combinationField,
                                                                           final T sourceObject) {
-        final Collection<?> fieldValue = combinationField
-                .getSourceFieldValue(sourceObject);
-        final CombinationsGenerator<?> combinationsGenerator = new IterativeCombinationsGenerator<>(fieldValue,
+        final var fieldValue = combinationField.getSourceFieldValue(sourceObject);
+        final var combinationsGenerator = new IterativeCombinationsGenerator<>(fieldValue,
                 combinationField.getCombinationSize());
-        final Combinations<?> combinations = combinationsGenerator.generate();
+        final var combinations = combinationsGenerator.generate();
         return Map.entry(combinationField, combinations);
     }
 }
