@@ -3,6 +3,7 @@ package br.com.rnaufal.jcombiner.impl.combiner;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationImpl;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationsImpl;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Queues;
 
@@ -63,11 +64,6 @@ public class IterativeCombinationsGenerator<T> implements CombinationsGenerator<
     }
 
     private List<Integer> buildIndexCombination(final Deque<Integer> indexes) {
-        final List<Integer> combination = Lists.newArrayList();
-        final var iterator = indexes.descendingIterator();
-        while (iterator.hasNext()) {
-            combination.add(iterator.next());
-        }
-        return combination;
+        return ImmutableList.copyOf(indexes.descendingIterator());
     }
 }
