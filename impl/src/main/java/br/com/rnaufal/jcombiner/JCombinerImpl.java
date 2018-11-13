@@ -2,13 +2,11 @@ package br.com.rnaufal.jcombiner;
 
 import br.com.rnaufal.jcombiner.api.JCombiner;
 import br.com.rnaufal.jcombiner.api.domain.Combinations;
-import br.com.rnaufal.jcombiner.impl.combiner.CombinationsGenerator;
 import br.com.rnaufal.jcombiner.impl.combiner.IterativeCombinationsGenerator;
 import br.com.rnaufal.jcombiner.impl.domain.CombinationField;
 import br.com.rnaufal.jcombiner.parser.CombinationAnnotationParser;
 import br.com.rnaufal.jcombiner.parser.CombinationAnnotationParserImpl;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
