@@ -6,9 +6,11 @@
 JCombiner is a framework to generate combinations of collections in Java. It uses:
 
 * JDK 11
+* JPMS (Java Platform Module System)
 * Gradle
 * JUnit 5
 * Mockito
+* JaCoCo
 
 ## Build
 
